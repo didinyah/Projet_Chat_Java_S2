@@ -35,49 +35,49 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 /**
- * Exemple de fen√®tre contenant une liste d'√©l√©ments
+ * Exemple de fenËtre contenant une liste d'ÈlÈments
  *
  * @author davidroussel
  */
 public class ListExampleFrame extends JFrame
 {
 	/**
-	 * Cha√Æne de caract√®re pour passer √† la ligne
+	 * ChaÓne de caractËre pour passer ‡† la ligne
 	 */
 	private static String newline = System.getProperty("line.separator");
 
 	/**
-	 * Liste des √©l√©ments √† afficher dans la JList.
-	 * Les ajouts et retraits effectu√©s dans cette ListModel seront alors
+	 * Liste des ÈlÈments ‡† afficher dans la JList.
+	 * Les ajouts et retraits effectuÈs dans cette ListModel seront alors
 	 * automatiquement transmis au JList contenant ce ListModel
 	 */
 	private DefaultListModel<String> elements = new DefaultListModel<String>();
 
 	/**
-	 * Le mod√®le de s√©lection de la JList.
-	 * Conserve les indices des √©l√©ments s√©lectionn√©s de {@link #elements} dans
-	 * la JList qui affiche ces √©l√©ments.
+	 * Le modËle de sÈlection de la JList.
+	 * Conserve les indices des ÈlÈments sÈlectionnÈs de {@link #elements} dans
+	 * la JList qui affiche ces ÈlÈments.
 	 */
 	private ListSelectionModel selectionModel = null;
 
 	/**
-	 * La text area o√π afficher les messages
+	 * La text area o‡π afficher les messages
 	 */
 	private JTextArea output = null;
 
 	/**
-	 * Action √† r√©aliser lorsque l'on souhaite supprimer les √©l√©ments
-	 * s√©lectionnn√©s de la liste
+	 * Action ‡† rÈaliser lorsque l'on souhaite supprimer les ÈlÈments
+	 * sÈlectionnnÈs de la liste
 	 */
 	private final Action removeAction = new RemoveItemAction();
 
 	/**
-	 * Action √† r√©aliser lorsque l'on souhaite d√©selctionner tous les √©lements de la liste
+	 * Action ‡† rÈaliser lorsque l'on souhaite dÈselctionner tous les Èlements de la liste
 	 */
 	private final Action clearSelectionAction = new ClearSelectionAction();
 
 	/**
-	 * Action √† r√©aliser lorsque l'on souhaite ajouter un √©l√©ment √† la liste
+	 * Action ‡† rÈaliser lorsque l'on souhaite ajouter un ÈlÈment ‡† la liste
 	 */
 	private final Action addAction = new AddAction();
 
@@ -86,12 +86,12 @@ public class ListExampleFrame extends JFrame
 	 */
 	public ListExampleFrame() throws HeadlessException
 	{
-		super(); // d√©j√† implicite
-		elements.addElement("T√©n√©phore");
-		elements.addElement("Z√©bulon");
-		elements.addElement("Z√©phirine");
+		super(); // dÈj‡† implicite
+		elements.addElement("TÈnÈphore");
+		elements.addElement("ZÈbulon");
+		elements.addElement("ZÈphirine");
 		elements.addElement("Uriel");
-		elements.addElement("Philom√®ne");
+		elements.addElement("PhilomËne");
 
 		setPreferredSize(new Dimension(200, 100));
 		getContentPane().setLayout(new BorderLayout(0, 0));

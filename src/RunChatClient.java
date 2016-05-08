@@ -2,6 +2,8 @@ import java.awt.EventQueue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Vector;
@@ -11,6 +13,7 @@ import chat.UserOutputType;
 import chat.client.ChatClient;
 import widgets.AbstractClientFrame;
 import widgets.ClientFrame;
+import widgets.ClientFrame2;
 
 /**
  * Lanceur d'un client de chat.
@@ -20,7 +23,7 @@ import widgets.ClientFrame;
 public class RunChatClient extends AbstractRunChat
 {
 	/**
-	 * H√¥te sur lequel se trouve le serveur de chat
+	 * HÙte sur lequel se trouve le serveur de chat
 	 */
 	private String host;
 
@@ -31,7 +34,7 @@ public class RunChatClient extends AbstractRunChat
 	private String name;
 
 	/**
-	 * Flux d'entr√©e sur lequel lire les messages tap√©s par l'utilisateur
+	 * Flux d'entrÈe sur lequel lire les messages tapÈs par l'utilisateur
 	 */
 	private InputStream userIn;
 
@@ -41,7 +44,7 @@ public class RunChatClient extends AbstractRunChat
 	private OutputStream userOut;
 
 	/**
-	 * Indique si le client √† cr√©er est un GUI ou pas
+	 * Indique si le client √† crÈer est un GUI ou pas
 	 */
 	private boolean gui;
 
@@ -56,7 +59,7 @@ public class RunChatClient extends AbstractRunChat
 
 	/**
 	 * Ensemble des threads des clients.
-	 * Il faudra attendre la fin de ces threads pour terminer l'ex√©cution
+	 * Il faudra attendre la fin de ces threads pour terminer l'exÈcution
 	 * principal.
 	 */
 	private Vector<Thread> threadPool;
@@ -73,7 +76,7 @@ public class RunChatClient extends AbstractRunChat
 
 		/*
 		 * Initialisation des flux d'I/O utilisateur √† null
-		 * ils d√©pendront du client √† cr√©er (console ou GUI)
+		 * ils dÈpendront du client √† crÈer (console ou GUI)
 		 */
 		userIn = null;
 		userOut = null;
@@ -86,7 +89,7 @@ public class RunChatClient extends AbstractRunChat
 
 	/**
 	 * Mise en place des attributs du client de chat en fonction des arguments
-	 * utilis√©s dans la ligne de commande
+	 * utilisÈs dans la ligne de commande
 	 * @param args les arguments fournis au programme principal.
 	 */
 	@Override
@@ -100,14 +103,14 @@ public class RunChatClient extends AbstractRunChat
 		super.setAttributes(args);
 
 		/*
-		 * On met d'abord les attributs locaux √† leur valeur par d√©faut
+		 * On met d'abord les attributs locaux √† leur valeur par dÈfaut
 		 */
 		host = null;
 		name = null;
 		gui = false;
 
 		/*
-		 * parsing des arguments sp√©cifique au client
+		 * parsing des arguments spÈcifique au client
 		 * -h | --host : nom ou adresse IP du serveur
 		 * -n | --name : nom d'utilisateur
 		 * -g | --gui : pour lancer le client GUI
@@ -234,34 +237,42 @@ public class RunChatClient extends AbstractRunChat
 		{
 			if (System.getProperty("os.name").startsWith("Mac OS"))
 			{
-				// Met en place le menu en haut de l'√©cran plut√¥t que dans l'application
+				// Met en place le menu en haut de l'Ècran plutÙt que dans l'application
 				System.setProperty("apple.laf.useScreenMenuBar", "true");
 		        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Name");
 			}
 
 			/*
 			 * On a besoin d'un commonRun entre la frame et les ServerHandler
-			 * et UserHandler du client cr√©√© plus bas.
+			 * et UserHandler du client crÈÈ plus bas.
 			 */
 			commonRun = Boolean.TRUE;
 
 			/*
-			 * Cr√©ation de la fen√™tre de chat
-			 * TODO √† customizer lorsrque vous aurez cr√©√© la classe
+			 * CrÈation de la fen√™tre de chat
+			 * TODO √† customizer lorsrque vous aurez crÈÈ la classe
 			 * ClientFrame2
 			 */
-			final AbstractClientFrame frame = new ClientFrame(name, host, commonRun, logger);
+			
+			final AbstractClientFrame frame;
+			if(guiVersion==1) {
+				frame = new ClientFrame(name, host, commonRun, logger);
+			}
+			else {
+				frame = new ClientFrame2(name, host, commonRun, logger);
+			}
 
 			/*
-			 * TODO Cr√©ation du flux de sortie vers le GUI : userOut √† partir du
-			 * flux d'entr√©e de la frame (ClientFrame#getInPipe())
+			 * TODO CrÈation du flux de sortie vers le GUI : userOut √† partir du
+			 * flux d'entrÈe de la frame (ClientFrame#getInPipe())
 			 * 	- Creation d'un PipedOutputStream √† connecter sur
 			 * 	- le PipedInputStream de la frame
 			 */
 			try
 			{
 				// userOut = TODO Complete ...
-				throw new IOException(); // TODO Remove when done
+				userOut = new PipedOutputStream(frame.getInPipe());
+				//throw new IOException(); // TODO Remove when done
 			}
 			catch (IOException e)
 			{
@@ -272,15 +283,16 @@ public class RunChatClient extends AbstractRunChat
 			}
 
 			/*
-			 * TODO Cr√©ation du flux d'entr√©e depuis le GUI : userIn √† partir du
+			 * TODO CrÈation du flux d'entrÈe depuis le GUI : userIn √† partir du
 			 * flux de sortie de la frame (ClientFrame#getOutPipe())
-			 * 	- Cr√©ation d'un PipedInputStream √† connecter sur
+			 * 	- CrÈation d'un PipedInputStream √† connecter sur
 			 * 	- le PipedOutputStream de la frame
 			 */
 			try
 			{
 				// userIn = TODO Complete ...
-				throw new IOException(); // TODO Remove when done
+				userIn = new PipedInputStream(frame.getOutPipe());
+				//throw new IOException(); // TODO Remove when done
 			}
 			catch (IOException e)
 			{
@@ -291,7 +303,7 @@ public class RunChatClient extends AbstractRunChat
 			}
 
 			/*
-			 * Insertion de la frame dans la file des √©v√®nements GUI
+			 * Insertion de la frame dans la file des Èv√®nements GUI
 			 * gr√¢ce √† un Runnable anonyme
 			 */
 			EventQueue.invokeLater(new Runnable()
@@ -312,7 +324,7 @@ public class RunChatClient extends AbstractRunChat
 			});
 
 			/*
-			 * Cr√©ation et lancement du thread de la frame
+			 * CrÈation et lancement du thread de la frame
 			 */
 			Thread guiThread = new Thread(frame);
 			threadPool.add(guiThread);
@@ -323,7 +335,7 @@ public class RunChatClient extends AbstractRunChat
 		{
 			// lecture depuis la console
 			userIn = System.in;
-			// √©criture vers la console
+			// Ècriture vers la console
 			userOut = System.out;
 			// On a pas besoin d'un commonRun avec le client console
 			commonRun = null;
@@ -333,10 +345,10 @@ public class RunChatClient extends AbstractRunChat
 		 * Lancement du ChatClient
 		 */
 		UserOutputType outType = UserOutputType.fromInteger(guiVersion);
-		ChatClient client = new ChatClient(host,		// h√¥te du serveur
+		ChatClient client = new ChatClient(host,		// hÙte du serveur
 		                                   port,		// port tcp
 		                                   name,		// nom d'utilisateur
-		                                   userIn,		// entr√©es utilisateur
+		                                   userIn,		// entrÈes utilisateur
 		                                   userOut,		// sorties utilisateur
 		                                   outType,		// Type sortie utilisateur
 		                                   commonRun,	// commonRun avec le GUI

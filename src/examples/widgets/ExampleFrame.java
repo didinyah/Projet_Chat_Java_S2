@@ -29,13 +29,13 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 
 /**
- * Exemple simple de fenÃªtre graphique
+ * Exemple simple de fenàªtre graphique
  * @author davidroussel
  */
 public class ExampleFrame extends JFrame
 {
 	/**
-	 * ChaÃ®ne de caractÃ¨re pour passer Ã  la ligne
+	 * Chaà®ne de caractère pour passer à  la ligne
 	 */
 	protected static String newline = System.getProperty("line.separator");
 
@@ -55,41 +55,41 @@ public class ExampleFrame extends JFrame
 	private JButton clearButton;
 
 	/**
-	 * Document dans lequel Ã©crire (Ã  extraire du JTextPane avec
+	 * Document dans lequel écrire (à  extraire du JTextPane avec
 	 * {@link JTextPane.getStyledDocument()})
 	 */
 	protected StyledDocument document;
 
 	/**
-	 * Style Ã  appliquer lors de l'Ã©criture dans le document
+	 * Style à  appliquer lors de l'écriture dans le document
 	 */
 	protected Style style;
 
 	/**
-	 * Couleur par dÃ©faut lors de l'Ã©criture dans le document
+	 * Couleur par défaut lors de l'écriture dans le document
 	 */
 	protected Color defaultColor;
 
 	/**
-	 * Action Ã  rÃ©aliser lorsque l'on cliquera sur le bouton "Red" ou lorsque
+	 * Action à  réaliser lorsque l'on cliquera sur le bouton "Red" ou lorsque
 	 * l'on tapera "Crtl-R" dans le JTextPane
 	 */
 	private final Action redAction;
 
 	/**
-	 * Action Ã  rÃ©aliser lorsque l'on cliquera sur le bouton "Blue" ou lorsque
+	 * Action à  réaliser lorsque l'on cliquera sur le bouton "Blue" ou lorsque
 	 * l'on tapera "Crtl-B" dans le JTextPane
 	 */
 	private final Action blueAction;
 
 	/**
-	 * Action Ã  rÃ©aliser lorsque l'on cliquera sur le bouton "Clear" ou lorsque
+	 * Action à  réaliser lorsque l'on cliquera sur le bouton "Clear" ou lorsque
 	 * l'on tapera "Crtl-L" dans le JTextPane
 	 */
 	private final Action clearAction;
 
 	/**
-	 * CrÃ©ation d'une fenÃªtre graphique simple
+	 * Création d'une fenàªtre graphique simple
 	 * @throws HeadlessException
 	 */
 	public ExampleFrame() throws HeadlessException
@@ -149,8 +149,8 @@ public class ExampleFrame extends JFrame
 	}
 
 	/**
-	 * Ajoute du texte avec une couleur spÃ©cifique Ã  la fin du document
-	 * @param text le texte Ã  ajouter
+	 * Ajoute du texte avec une couleur spécifique à  la fin du document
+	 * @param text le texte à  ajouter
 	 * @param color la couleur dans laquelle ajouter le texte
 	 */
 	public void appendToDocument(String text, Color color)
@@ -173,13 +173,13 @@ public class ExampleFrame extends JFrame
 
 	// ------------------------------------------------------------------------
 	// Actions de l'application
-	//	On utilise des actions lorsque celles ci doivent pouvoir Ãªtre invoquÃ©es
-	//	depuis divers Ã©lements de l'interface graphique: p.ex. menu ET bouton.
+	//	On utilise des actions lorsque celles ci doivent pouvoir àªtre invoquées
+	//	depuis divers élements de l'interface graphique: p.ex. menu ET bouton.
 	//	Sinon un simple ActionListener sur un bouton par exemple suffirait.
 	// ------------------------------------------------------------------------
 
 	/**
-	 * Action listener interne Ã  la classe ExampleFrame pour executer les
+	 * Action listener interne à  la classe ExampleFrame pour executer les
 	 * instructions requises lorsque l'on clique sur le bouton "blue"
 	 */
 	private class BlueAction extends AbstractAction
@@ -199,15 +199,15 @@ public class ExampleFrame extends JFrame
 		}
 
 		/**
-		 * Action Ã  rÃ©aliser lorsque le BlueAction est sollicitÃ©
-		 * @param e l'action event associÃ©
+		 * Action à  réaliser lorsque le BlueAction est sollicité
+		 * @param e l'action event associé
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			/*
-			 * BlueAction Ã©tant une classe interne (non static) elle a
-			 * donc accÃ¨s aux membres de la classe ExampleFrame
+			 * BlueAction étant une classe interne (non static) elle a
+			 * donc accès aux membres de la classe ExampleFrame
 			 * Change la couleur du texte en bleu et affiche un message
 			 */
 			appendToDocument("Blue", Color.BLUE);
@@ -215,7 +215,7 @@ public class ExampleFrame extends JFrame
 	}
 
 	/**
-	 * Listener lorsque le bouton #btnClear est activÃ©.
+	 * Listener lorsque le bouton #btnClear est activé.
 	 * Efface le contenu du {@link #document}
 	 */
 	private class ClearAction extends AbstractAction
@@ -235,8 +235,8 @@ public class ExampleFrame extends JFrame
 		}
 
 		/**
-		 * OpÃ©rations Ã  rÃ©aliser lorsque #clearAction est sollicitÃ©e
-		 * @param e l'Ã©vÃ¨nement Ã  l'origine du dÃ©clenchement de l'action
+		 * Opérations à  réaliser lorsque #clearAction est sollicitée
+		 * @param e l'évènement à  l'origine du déclenchement de l'action
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e)
@@ -254,7 +254,7 @@ public class ExampleFrame extends JFrame
 	}
 
 	/**
-	 * Action interne Ã  la classe ExampleFrame pour executer les
+	 * Action interne à  la classe ExampleFrame pour executer les
 	 * instructions requises lorsque l'on clique sur le bouton "red"
 	 */
 	private class RedAction extends AbstractAction
@@ -274,8 +274,8 @@ public class ExampleFrame extends JFrame
 		}
 
 		/**
-		 * OpÃ©rations Ã  rÃ©aliser lorsque #redAction est sollicitÃ©e
-		 * @param e l'Ã©vÃ¨nement Ã  l'origine du dÃ©clenchement de l'action
+		 * Opérations à  réaliser lorsque #redAction est sollicitée
+		 * @param e l'évènement à  l'origine du déclenchement de l'action
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e)

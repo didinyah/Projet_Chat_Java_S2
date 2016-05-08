@@ -8,7 +8,7 @@ import examples.widgets.ListExampleFrame;
 
 
 /**
- * Programme principal lan√ßant une {@link ExampleFrame}
+ * Programme principal lanÁant une {@link ExampleFrame}
  * @author davidroussel
  *
  */
@@ -22,12 +22,12 @@ public class RunListFrame
 	{
 		if (System.getProperty("os.name").startsWith("Mac OS"))
 		{
-			// Met en place le menu en haut de l'√©cran plut√¥t que dans l'application
+			// Met en place le menu en haut de l'Ècran plut√¥t que dans l'application
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 	        System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Name");
 		}
 
-		// Insertion de la frame dans la file des √©v√®nements GUI
+		// Insertion de la frame dans la file des ÈvËnements GUI
 		EventQueue.invokeLater(new Runnable()
 		{
 			@Override

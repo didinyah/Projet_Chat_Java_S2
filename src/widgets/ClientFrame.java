@@ -37,52 +37,52 @@ import javax.swing.text.StyleConstants;
 import chat.Vocabulary;
 
 /**
- * FenÃªtre d'affichae de la version GUI texte du client de chat.
+ * Fenàªtre d'affichae de la version GUI texte du client de chat.
  * @author davidroussel
  */
 public class ClientFrame extends AbstractClientFrame
 {
 	/**
-	 * Lecteur de flux d'entrÃ©e. Lit les donnÃ©es texte du {@link #inPipe} pour
+	 * Lecteur de flux d'entrée. Lit les données texte du {@link #inPipe} pour
 	 * les afficher dans le {@link #document}
 	 */
 	private BufferedReader inBR;
 
 	/**
-	 * Le label indiquant sur quel serveur on est connectÃ©
+	 * Le label indiquant sur quel serveur on est connecté
 	 */
 	protected final JLabel serverLabel;
 
 	/**
-	 * La zone du texte Ã  envoyer
+	 * La zone du texte à  envoyer
 	 */
 	protected final JTextField sendTextField;
 
 	/**
-	 * Actions Ã  rÃ©aliser lorsque l'on veut effacer le contenu du document
+	 * Actions à  réaliser lorsque l'on veut effacer le contenu du document
 	 */
 	private final ClearAction clearAction;
 
 	/**
-	 * Actions Ã  rÃ©aliser lorsque l'on veut envoyer un message au serveur
+	 * Actions à  réaliser lorsque l'on veut envoyer un message au serveur
 	 */
 	private final SendAction sendAction;
 
 	/**
-	 * Actions Ã  rÃ©aliser lorsque l'on veut envoyer un message au serveur
+	 * Actions à  réaliser lorsque l'on veut envoyer un message au serveur
 	 */
 	protected final QuitAction quitAction;
 
 	/**
-	 * RÃ©fÃ©rence Ã  la fenÃªtre courante (Ã  utiliser dans les classes internes)
+	 * Référence à  la fenàªtre courante (à  utiliser dans les classes internes)
 	 */
 	protected final JFrame thisRef;
 
 	/**
-	 * Constructeur de la fenÃªtre
+	 * Constructeur de la fenàªtre
 	 * @param name le nom de l'utilisateur
-	 * @param host l'hÃ´te sur lequel on est connectÃ©
-	 * @param commonRun Ã©tat d'exÃ©cution des autres threads du client
+	 * @param host l'hà´te sur lequel on est connecté
+	 * @param commonRun état d'exécution des autres threads du client
 	 * @param parentLogger le logger parent pour les messages
 	 * @throws HeadlessException
 	 */
@@ -99,13 +99,13 @@ public class ClientFrame extends AbstractClientFrame
 		// Flux d'IO
 		//---------------------------------------------------------------------
 		/*
-		 * Attention, la crÃ©ation du flux d'entrÃ©e doit (Ã©ventuellement) Ãªtre
-		 * reportÃ©e jusqu'au lancement du run dans la mesure oÃ¹ le inPipe
-		 * peut ne pas encore Ãªtre connectÃ© Ã  un PipedOutputStream
+		 * Attention, la création du flux d'entrée doit (éventuellement) àªtre
+		 * reportée jusqu'au lancement du run dans la mesure oà¹ le inPipe
+		 * peut ne pas encore àªtre connecté à  un PipedOutputStream
 		 */
 
 		// --------------------------------------------------------------------
-		// CrÃ©ation des actions send, clear et quit
+		// Création des actions send, clear et quit
 		// --------------------------------------------------------------------
 
 		sendAction = new SendAction();
@@ -115,7 +115,7 @@ public class ClientFrame extends AbstractClientFrame
 
 		/*
 		 * Ajout d'un listener pour fermer correctement l'application lorsque
-		 * l'on ferme la fenÃªtre. WindowListener sur this
+		 * l'on ferme la fenàªtre. WindowListener sur this
 		 */
 		addWindowListener(new FrameWindowListener());
 
@@ -181,7 +181,7 @@ public class ClientFrame extends AbstractClientFrame
 
 		// --------------------------------------------------------------------
 		// Documents
-		// rÃ©cupÃ©ration du document du textPane ainsi que du documentStyle et du
+		// récupération du document du textPane ainsi que du documentStyle et du
 		// defaultColor du document
 		//---------------------------------------------------------------------
 		document = textPane.getStyledDocument();
@@ -192,16 +192,16 @@ public class ClientFrame extends AbstractClientFrame
 	}
 
 	/**
-	 * Affichage d'un message dans le {@link #document}, puis passage Ã  la ligne
+	 * Affichage d'un message dans le {@link #document}, puis passage à  la ligne
 	 * (avec l'ajout de {@link Vocabulary#newLine})
-	 * La partie "[yyyy/MM/dd HH:mm:ss]" correspond Ã  la date/heure courante
-	 * obtenue grÃ¢ce Ã  un Calendar et est affichÃ©e avec la defaultColor alors
-	 * que la partie "utilisateur > message" doit Ãªtre affichÃ©e avec une couleur
-	 * dÃ©terminÃ©e d'aprÃ¨s le nom d'utilisateur avec
-	 * {@link #getColorFromName(String)}, le nom d'utilisateur est quant Ã  lui
-	 * dÃ©terminÃ© d'aprÃ¨s le message lui mÃªme avec {@link #parseName(String)}.
-	 * @param message le message Ã  afficher dans le {@link #document}
-	 * @throws BadLocationException si l'Ã©criture dans le document Ã©choue
+	 * La partie "[yyyy/MM/dd HH:mm:ss]" correspond à  la date/heure courante
+	 * obtenue grà¢ce à  un Calendar et est affichée avec la defaultColor alors
+	 * que la partie "utilisateur > message" doit àªtre affichée avec une couleur
+	 * déterminée d'aprês le nom d'utilisateur avec
+	 * {@link #getColorFromName(String)}, le nom d'utilisateur est quant à  lui
+	 * déterminé d'aprês le message lui màªme avec {@link #parseName(String)}.
+	 * @param message le message à  afficher dans le {@link #document}
+	 * @throws BadLocationException si l'écriture dans le document échoue
 	 * @see {@link examples.widgets.ExampleFrame#appendToDocument(String, Color)}
 	 * @see java.text.SimpleDateFormat#SimpleDateFormat(String)
 	 * @see java.util.Calendar#getInstance()
@@ -213,8 +213,8 @@ public class ClientFrame extends AbstractClientFrame
 	protected void writeMessage(String message) throws BadLocationException
 	{
 		/*
-		 * ajout du message "[yyyy/MM/dd HH:mm:ss] utilisateur > message" Ã 
-		 * la fin du document avec la couleur dÃ©terminÃ©e d'aprÃ¨s "utilisateur"
+		 * ajout du message "[yyyy/MM/dd HH:mm:ss] utilisateur > message" à 
+		 * la fin du document avec la couleur déterminée d'aprês "utilisateur"
 		 * (voir AbstractClientFrame#getColorFromName)
 		 */
 		StringBuffer sb = new StringBuffer();
@@ -237,7 +237,7 @@ public class ClientFrame extends AbstractClientFrame
 		                      sb.toString(),
 		                      documentStyle);
 
-		// Retour Ã  la couleur de texte par dÃ©faut
+		// Retour à  la couleur de texte par défaut
 		StyleConstants.setForeground(documentStyle, defaultColor);
 
 	}
@@ -245,18 +245,18 @@ public class ClientFrame extends AbstractClientFrame
 	/**
 	 * Recherche du nom d'utilisateur dans un message de type
 	 * "utilisateur > message".
-	 * parseName est utilisÃ© pour extraire le nom d'utilisateur d'un message
-	 * afin d'utiliser le hashCode de ce nom pour crÃ©er une couleur dans
+	 * parseName est utilisé pour extraire le nom d'utilisateur d'un message
+	 * afin d'utiliser le hashCode de ce nom pour créer une couleur dans
 	 * laquelle
-	 * sera affichÃ© le message de cet utilisateur (ainsi tous les messages d'un
-	 * mÃªme utilisateur auront la mÃªme couleur).
-	 * @param message le message Ã  parser
+	 * sera affiché le message de cet utilisateur (ainsi tous les messages d'un
+	 * màªme utilisateur auront la màªme couleur).
+	 * @param message le message à  parser
 	 * @return le nom d'utilisateur s'il y en a un sinon null
 	 */
 	protected String parseName(String message)
 	{
 		/*
-		 * renvoyer la chaine correspondant Ã  la partie "utilisateur" dans
+		 * renvoyer la chaine correspondant à  la partie "utilisateur" dans
 		 * un message contenant "utilisateur > message", ou bien null si cette
 		 * partie n'existe pas.
 		 */
@@ -283,7 +283,7 @@ public class ClientFrame extends AbstractClientFrame
 	/**
 	 * Recherche du contenu du message dans un message de type
 	 * "utilisateur > message"
-	 * @param message le message Ã  parser
+	 * @param message le message à  parser
 	 * @return le contenu du message s'il y en a un sinon null
 	 */
 	protected String parseContent(String message)
@@ -309,7 +309,7 @@ public class ClientFrame extends AbstractClientFrame
 	}
 
 	/**
-	 * Listener lorsque le bouton #btnClear est activÃ©. Efface le contenu du
+	 * Listener lorsque le bouton #btnClear est activé. Efface le contenu du
 	 * {@link #document}
 	 */
 	protected class ClearAction extends AbstractAction
@@ -334,8 +334,8 @@ public class ClientFrame extends AbstractClientFrame
 		}
 
 		/**
-		 * OpÃ©rations rÃ©alisÃ©es lorsque l'action est sollicitÃ©e
-		 * @param e Ã©vÃ¨nement Ã  l'origine de l'action
+		 * Opérations réalisées lorsque l'action est sollicitée
+		 * @param e évênement à  l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
@@ -357,7 +357,7 @@ public class ClientFrame extends AbstractClientFrame
 	}
 
 	/**
-	 * Action rÃ©alisÃ©e pour envoyer un message au serveur
+	 * Action réalisée pour envoyer un message au serveur
 	 */
 	protected class SendAction extends AbstractAction
 	{
@@ -381,15 +381,15 @@ public class ClientFrame extends AbstractClientFrame
 		}
 
 		/**
-		 * OpÃ©rations rÃ©alisÃ©es lorsque l'action est sollicitÃ©e
-		 * @param e Ã©vÃ¨nement Ã  l'origine de l'action
+		 * Opérations réalisées lorsque l'action est sollicitée
+		 * @param e évênement à  l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			/*
-			 * rÃ©cupÃ©ration du contenu du textfield et envoi du message au
+			 * récupération du contenu du textfield et envoi du message au
 			 * serveur (ssi le message n'est pas vide), puis effacement du
 			 * contenu du textfield.
 			 */
@@ -413,7 +413,7 @@ public class ClientFrame extends AbstractClientFrame
 	}
 
 	/**
-	 * Action rÃ©alisÃ©e pour se dÃ©logguer du serveur
+	 * Action réalisée pour se délogguer du serveur
 	 */
 	private class QuitAction extends AbstractAction
 	{
@@ -437,8 +437,8 @@ public class ClientFrame extends AbstractClientFrame
 		}
 
 		/**
-		 * OpÃ©rations rÃ©alisÃ©es lorsque l'action "quitter" est sollicitÃ©e
-		 * @param e Ã©vÃ¨nement Ã  l'origine de l'action
+		 * Opérations réalisées lorsque l'action "quitter" est sollicitée
+		 * @param e évênement à  l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
@@ -463,13 +463,13 @@ public class ClientFrame extends AbstractClientFrame
 	}
 
 	/**
-	 * Classe gÃ©rant la fermeture correcte de la fenÃªtre. La fermeture correcte
-	 * de la fenÃ¨tre implique de lancer un cleanup
+	 * Classe gérant la fermeture correcte de la fenàªtre. La fermeture correcte
+	 * de la fenêtre implique de lancer un cleanup
 	 */
 	protected class FrameWindowListener extends WindowAdapter
 	{
 		/**
-		 * MÃ©thode dÃ©clenchÃ©e Ã  la fermeture de la fenÃªtre. Envoie la commande
+		 * Méthode déclenchée à  la fermeture de la fenàªtre. Envoie la commande
 		 * "bye" au serveur
 		 */
 		@Override
@@ -488,9 +488,9 @@ public class ClientFrame extends AbstractClientFrame
 	}
 
 	/**
-	 * ExÃ©cution de la boucle d'exÃ©cution. La boucle d'exÃ©cution consiste Ã  lire
-	 * une ligne sur le flux d'entrÃ©e avec un BufferedReader tant qu'une erreur
-	 * d'IO n'intervient pas indiquant que le flux a Ã©tÃ© coupÃ©. Auquel cas on
+	 * Exécution de la boucle d'exécution. La boucle d'exécution consiste à  lire
+	 * une ligne sur le flux d'entrée avec un BufferedReader tant qu'une erreur
+	 * d'IO n'intervient pas indiquant que le flux a été coupé. Auquel cas on
 	 * quitte la boucle principale et on ferme les flux d'I/O avec #cleanup()
 	 */
 	@Override
@@ -510,22 +510,23 @@ public class ClientFrame extends AbstractClientFrame
 			 * - Si cette ligne de texte n'est pas nulle on affiche le message
 			 * dans le document avec le format voulu en utilisant
 			 * #writeMessage(String)
-			 * - AprÃ¨s la fin de la boucle on change commonRun Ã  false de
-			 * maniÃ¨re synchronisÃ©e afin que les autres threads utilisant ce
-			 * commonRun puissent s'arrÃªter eux aussi :
+			 * - Aprês la fin de la boucle on change commonRun à  false de
+			 * maniêre synchronisée afin que les autres threads utilisant ce
+			 * commonRun puissent s'arràªter eux aussi :
 			 * synchronized(commonRun)
 			 * {
 			 * commonRun = Boolean.FALSE;
 			 * }
-			 * Dans toutes les Ã©tapes si un problÃ¨me survient (erreur,
-			 * exception, ...) on quitte la boucle en ayant au prÃ©alable ajoutÃ©
+			 * Dans toutes les étapes si un problême survient (erreur,
+			 * exception, ...) on quitte la boucle en ayant au préalable ajouté
 			 * un "warning" ou un "severe" au logger (en fonction de l'erreur
-			 * rencontrÃ©e) et mis le commonRun Ã  false (de maniÃ¨re synchronisÃ©).
+			 * rencontrée) et mis le commonRun à  false (de maniêre synchronisé).
 			 */
+			
 			try
 			{
 				/*
-				 * read from input (doit Ãªtre bloquant)
+				 * read from input (doit àªtre bloquant)
 				 */
 				messageIn = inBR.readLine();
 			}
@@ -537,7 +538,7 @@ public class ClientFrame extends AbstractClientFrame
 
 			if (messageIn != null)
 			{
-				// Ajouter le message Ã  la fin du document avec la couleur
+				// Ajouter le message à  la fin du document avec la couleur
 				// voulue
 				try
 				{
@@ -569,7 +570,7 @@ public class ClientFrame extends AbstractClientFrame
 	}
 
 	/**
-	 * Fermeture de la fenÃ¨tre et des flux Ã  la fin de l'exÃ©cution
+	 * Fermeture de la fenêtre et des flux à  la fin de l'exécution
 	 */
 	@Override
 	public void cleanup()

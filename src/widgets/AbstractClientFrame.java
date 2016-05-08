@@ -23,13 +23,13 @@ import logger.LoggerFactory;
 public abstract class AbstractClientFrame extends JFrame implements Runnable
 {
 	/**
-	 * Etat d'ex√©cution du run pour √©couter les messages en provenance du
+	 * Etat d'exÈcution du run pour Ècouter les messages en provenance du
 	 * serveur
 	 */
 	protected Boolean commonRun;
 
 	/**
-	 * Flux d'entr√©e pour lire les messages du serveur
+	 * Flux d'entrÈe pour lire les messages du serveur
 	 */
 	protected final PipedInputStream inPipe;
 
@@ -50,7 +50,7 @@ public abstract class AbstractClientFrame extends JFrame implements Runnable
 	protected Logger logger;
 
 	/**
-	 * Le document sous-jacent d'un {@link JTextPane} dans lequel on √©crira
+	 * Le document sous-jacent d'un {@link JTextPane} dans lequel on Ècrira
 	 * les messages
 	 */
 	protected StyledDocument document;
@@ -61,22 +61,22 @@ public abstract class AbstractClientFrame extends JFrame implements Runnable
 	protected Style documentStyle;
 
 	/**
-	 * La couleur par d√©faut du texte {@link #documentStyle}
+	 * La couleur par dÈfaut du texte {@link #documentStyle}
 	 */
 	protected Color defaultColor;
 
 	/**
-	 * Map associant une couleur √† un nom afin que l'on n'ai pas √† g√©n√©rer
+	 * Map associant une couleur √† un nom afin que l'on n'ai pas √† gÈnÈrer
 	 * une couleur √† chaque fois que l'on a besoin d'une couleur pour un nom.
 	 * Cette map est mise √† jour dans {@link #getColorFromName(String)}
 	 */
 	protected Map<String, Color> colorMap;
 
 	/**
-	 * Constructeur [prot√©g√©] de la fen√™tre de chat abstraite
+	 * Constructeur [protÈgÈ] de la fen√™tre de chat abstraite
 	 * @param name le nom de l'utilisateur
-	 * @param host l'h√¥te sur lequel on est connect√©
-	 * @param commonRun √©tat d'ex√©cution des autres threads du client
+	 * @param host l'h√¥te sur lequel on est connectÈ
+	 * @param commonRun Ètat d'exÈcution des autres threads du client
 	 * @param parentLogger le logger parent pour les messages
 	 * @throws HeadlessException
 	 */
@@ -152,7 +152,7 @@ public abstract class AbstractClientFrame extends JFrame implements Runnable
 		logger.info("ClientFrame::sendMessage writing out: "
 		    + (message == null ? "NULL" : message));
 		/*
-		 * DONE envoi du message dans le outPW et v√©rification du statut
+		 * DONE envoi du message dans le outPW et vÈrification du statut
 		 * d'erreur du #outPW (si c'est le cas on ajoute un warning au logger).
 		 */
 		if (message != null)
@@ -168,7 +168,7 @@ public abstract class AbstractClientFrame extends JFrame implements Runnable
 	/**
 	 * Couleur d'un texte d'apr√®s le contenu du texte.
 	 * @param name le texte
-	 * @return un couleur al√©atoire initialis√©e avec le hashCode du texte ou
+	 * @return un couleur alÈatoire initialisÈe avec le hashCode du texte ou
 	 * bien null si name est vide ou null
 	 */
 	protected Color getColorFromName(String name)
@@ -177,9 +177,9 @@ public abstract class AbstractClientFrame extends JFrame implements Runnable
 		 * DONE renvoyer une couleur (pas trop claire) d'apr√®s le nom
 		 * fourni en argument. Calcule une couleur en utilisant le hashCode du
 		 * texte pour initialiser un Random, le nextInt de ce Random nous
-		 * fournira alors un entier utilis√© pour cr√©er une Color. On pourra
-		 * √©ventuellement utiliser la m√©thode darker() sur cette couleur pour
-		 * √©viter les couleurs trop claires qui se voient mal sur fond blanc.
+		 * fournira alors un entier utilisÈ pour crÈer une Color. On pourra
+		 * Èventuellement utiliser la mÈthode darker() sur cette couleur pour
+		 * Èviter les couleurs trop claires qui se voient mal sur fond blanc.
 		 */
 		if (name != null)
 		{
@@ -213,7 +213,7 @@ public abstract class AbstractClientFrame extends JFrame implements Runnable
 	/**
 	 * Accesseur en lecture de l' {@link #outPipe} pour y connecter un
 	 * {@link PipedInputStream}
-	 * @return l'outPipe sur lequel on √©crit
+	 * @return l'outPipe sur lequel on Ècrit
 	 */
 	public PipedOutputStream getOutPipe()
 	{
@@ -221,7 +221,7 @@ public abstract class AbstractClientFrame extends JFrame implements Runnable
 	}
 
 	/**
-	 * Fermeture de la fen√®tre et des flux √† la fin de l'ex√©cution
+	 * Fermeture de la fen√®tre et des flux √† la fin de l'exÈcution
 	 */
 	public void cleanup()
 	{

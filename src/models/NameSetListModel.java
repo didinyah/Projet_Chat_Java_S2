@@ -2,26 +2,27 @@ package models;
 
 import java.util.Iterator;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 import javax.swing.AbstractListModel;
 
 /**
- * ListModel contenant des noms uniques (toujours triÃ© grÃ¢ce Ã  un TreeSet par
+ * ListModel contenant des noms uniques (toujours trié grâce à  un TreeSet par
  * exemple).
- * L'accÃ¨s Ã  la liste de noms doit Ãªtre thread safe (c'Ã d : plusieurs threads
- * peuvent accÃ©der concurrentiellement Ã  la liste de noms sans que celle ci se
- * retrouve dans un Ã©tat incohÃ©rent) : Les modifications du Set interne se font
+ * L'accès à  la liste de noms doit être thread safe (c'à d : plusieurs threads
+ * peuvent accéder concurrentiellement à  la liste de noms sans que celle ci se
+ * retrouve dans un état incohérent) : Les modifications du Set interne se font
  * toujours dans un bloc synchronized(nameSet) {...}.
- * L'ajout ou le retrait d'un Ã©lÃ©ment dans l'ensemble de nom est accompagnÃ©
- * d'un fireContentsChanged sur l'ensemble des Ã©lÃ©ments de la liste (Ã  cause
- * du tri implicite des Ã©lÃ©ments) ce qui permet au List Model de notifier
+ * L'ajout ou le retrait d'un élément dans l'ensemble de nom est accompagné
+ * d'un fireContentsChanged sur l'ensemble des éléments de la liste (à  cause
+ * du tri implicite des éléments) ce qui permet au List Model de notifier
  * tout widget dans lequel serait contenu ce ListModel.
  * @see {@link javax.swing.AbstractListModel}
  */
 public class NameSetListModel extends AbstractListModel<String>
 {
 	/**
-	 * Ensemble de noms triÃ©s
+	 * Ensemble de noms triés
 	 */
 	private SortedSet<String> nameSet;
 
@@ -31,75 +32,107 @@ public class NameSetListModel extends AbstractListModel<String>
 	public NameSetListModel()
 	{
 		// TODO nameSet = ...
+		nameSet = new TreeSet<String>();
 	}
 
 	/**
-	 * Ajout d'un Ã©lÃ©ment
-	 * @param value la valeur Ã  ajouter
-	 * @return true si l'Ã©lÃ©ment Ã  ajouter est non null et qu'il n'Ã©tait pas
-	 * dÃ©jÃ  prÃ©sent dans l'ensemble et false sinon.
+	 * Ajout d'un élément
+	 * @param value la valeur à  ajouter
+	 * @return true si l'élément à  ajouter est non null et qu'il n'était pas
+	 * déjà  présent dans l'ensemble et false sinon.
 	 * @warning Ne pas oublier de faire un
 	 * {@link #fireContentsChanged(Object, int, int)} lorsqu'un nom est
-	 * effectivement ajoutÃ© Ã  l'ensemble des noms
+	 * effectivement ajouté à  l'ensemble des noms
 	 */
 	public boolean add(String value)
 	{
 		// TODO Replace with implementation ...
-		return false;
+		if(value==null) {
+			return false;
+		}
+		else {
+			// si l'élément est déjà contenu, on ne fait rien, sinon on l'ajoute
+			if(this.contains(value)) {
+				return false;
+			}
+			else {
+				nameSet.add(value);
+				fireContentsChanged(this, 0, getSize());
+				return true;
+			}
+		}
 	}
 
 	/**
-	 * Teste si l'ensemble de noms contient le nom passÃ© en argument
-	 * @param value le nom Ã  rechercher
+	 * Teste si l'ensemble de noms contient le nom passé en argument
+	 * @param value le nom à  rechercher
 	 * @return true si l'ensemble de noms contient "value", false sinon.
 	 */
 	public boolean contains(String value)
 	{
 		// TODO Replace with implementation ...
-		return false;
+		if(nameSet.contains(value)) {
+			return true;
+		}
+		else {
+			return false;
+		}
+		
 	}
 
 	/**
-	 * Retrait de l'Ã©lÃ©ment situÃ© Ã  l'index index
-	 * @param index l'index de l'Ã©lÃ©ment Ã  supprimer
-	 * @return true si l'Ã©lÃ©ment a Ã©tÃ© supprimÃ©, false sinon
+	 * Retrait de l'élément situé à  l'index index
+	 * @param index l'index de l'élément à  supprimer
+	 * @return true si l'élément a été supprimé, false sinon
 	 * @warning Ne pas oublier de faire un
 	 * {@link #fireContentsChanged(Object, int, int)} lorsqu'un nom est
-	 * effectivement supprimÃ© de l'ensemble des noms
+	 * effectivement supprimé de l'ensemble des noms
 	 */
 	public boolean remove(int index)
 	{
 		// TODO Replace with implementation ...
-		return false;
+		// Il faut que l'index soit valide ( >0 et <taille et que la liste ne soit pas vide)
+		if(index >=0 && index < this.getSize() && this.getSize()>0) {
+			String toRemove = this.getElementAt(index);
+			nameSet.remove(toRemove);
+			fireContentsChanged(this, 0, getSize());
+			return true;
+		}
+		else {
+			return false;
+		}
+		
 	}
 
 	/**
 	 * Efface l'ensemble du contenu de la liste
 	 * @warning ne pas oublier de faire un
 	 * {@link #fireContentsChanged(Object, int, int)} lorsque le contenu est
-	 * effectivement effacÃ© (si non vide)
+	 * effectivement effacé (si non vide)
 	 */
 	public void clear()
 	{
 		// TODO Complete ...
+		nameSet.removeAll(nameSet);
+		fireContentsChanged(this, 0, getSize());
 	}
 
 	/**
-	 * Nombre d'Ã©lÃ©ments dans le ListModel
-	 * @return le nombre d'Ã©lÃ©ments dans le modÃ¨le de la liste
+	 * Nombre d'éléments dans le ListModel
+	 * @return le nombre d'éléments dans le modèle de la liste
 	 * @see javax.swing.ListModel#getSize()
 	 */
 	@Override
 	public int getSize()
 	{
 		// TODO Replace with implementation ...
-		return 0;
+		return nameSet.size();
 	}
 
 	/**
-	 * Accesseur Ã  l'Ã©lÃ©ment indexÃ©
-	 * @param l'index de l'Ã©lÃ©ment recherchÃ©
-	 * @return la chaine de caractÃ¨re correponsdant Ã  l'Ã©lÃ©ment recherchÃ© ou
+	 * Accesseur à  l'élément indexé
+	 * @param l'index de l'élément recherché
+	 * @return la chaine de caractère correponsdant à  l'élément recherché ou
 	 * bien null si celui ci n'existe pas
 	 * @see javax.swing.ListModel#getElementAt(int)
 	 */
@@ -107,14 +140,26 @@ public class NameSetListModel extends AbstractListModel<String>
 	public String getElementAt(int index)
 	{
 		// TODO Replace with implementation ...
-		return null;
+		if(index >=0 && index < this.getSize() && this.getSize()>0) {
+			String res="";
+			Iterator<String> it = nameSet.iterator();
+			int i = 0;
+			while (i!=index && it.hasNext()) {
+				res = it.next();
+				i++;
+			}
+			return res;
+		}
+		else {
+			return null;
+		}
 	}
 
 	/**
-	 * ReprÃ©sentation sous forme de chaine de caractÃ¨res de la liste de
-	 * noms unique et triÃ©s.
-	 * @return une chaine de caractÃ¨res reprÃ©setant la liste des noms uniques
-	 * et triÃ©s
+	 * Représentation sous forme de chaine de caractères de la liste de
+	 * noms unique et triés.
+	 * @return une chaine de caractères représetant la liste des noms uniques
+	 * et triés
 	 */
 	@Override
 	public String toString()
