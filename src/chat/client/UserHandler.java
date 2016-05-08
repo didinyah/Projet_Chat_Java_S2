@@ -148,7 +148,7 @@ class UserHandler implements Runnable
 			} catch (IOException e) {
 				logger.severe("UserHandler: Problème lors de la lecture du message");
 				logger.severe(e.getLocalizedMessage());
-				System.exit(Failure.OTHER.toInteger());
+				break;
 			}
 
 			if (userInput != null)
