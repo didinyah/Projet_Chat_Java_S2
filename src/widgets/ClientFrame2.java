@@ -19,11 +19,13 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
+import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -36,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
@@ -52,64 +55,64 @@ import chat.Vocabulary;
 import examples.widgets.ListExampleFrame.ColorTextRenderer;
 
 /**
- * Fenêtre d'affichae de la version GUI texte du client de chat.
+ * Fenï¿½tre d'affichae de la version GUI texte du client de chat.
  * @author davidroussel
  */
 public class ClientFrame2 extends AbstractClientFrame
 {
 	/**
-	 * Lecteur de flux d'entrée. Lit les données texte du {@link #inPipe} pour
+	 * Lecteur de flux d'entrï¿½e. Lit les donnï¿½es texte du {@link #inPipe} pour
 	 * les afficher dans le {@link #document}
 	 */
 	private BufferedReader inBR;
 
 	/**
-	 * Le label indiquant sur quel serveur on est connecté
+	 * Le label indiquant sur quel serveur on est connectï¿½
 	 */
 	protected final JLabel serverLabel;
 
 	/**
-	 * La zone du texte à  envoyer
+	 * La zone du texte ï¿½ envoyer
 	 */
 	protected final JTextField sendTextField;
 	
 	/**
-	 * Liste des éléments à  afficher dans la JList.
-	 * Les ajouts et retraits effectués dans cette ListModel seront alors
+	 * Liste des ï¿½lï¿½ments ï¿½ afficher dans la JList.
+	 * Les ajouts et retraits effectuï¿½s dans cette ListModel seront alors
 	 * automatiquement transmis au JList contenant ce ListModel
 	 */
 	private NameSetListModel elements = new NameSetListModel();
 
 	/**
-	 * Le modèle de sélection de la JList.
-	 * Conserve les indices des éléments sélectionnés de {@link #elements} dans
-	 * la JList qui affiche ces éléments.
+	 * Le modï¿½le de sï¿½lection de la JList.
+	 * Conserve les indices des ï¿½lï¿½ments sï¿½lectionnï¿½s de {@link #elements} dans
+	 * la JList qui affiche ces ï¿½lï¿½ments.
 	 */
 	private ListSelectionModel selectionModel = null;
 	
 	/**
-	 * Action à  réaliser lorsque l'on souhaite supprimer les éléments
-	 * sélectionnnés de la liste
+	 * Action ï¿½ rï¿½aliser lorsque l'on souhaite supprimer les ï¿½lï¿½ments
+	 * sï¿½lectionnnï¿½s de la liste
 	 */
 	private final Action removeAction = new RemoveItemAction();
 
 	/**
-	 * Action à  réaliser lorsque l'on souhaite déselctionner tous les élements de la liste
+	 * Action ï¿½ rï¿½aliser lorsque l'on souhaite dï¿½selctionner tous les ï¿½lements de la liste
 	 */
 	private final Action clearSelectionAction = new ClearSelectionAction();
 
 	/**
-	 * Actions à  réaliser lorsque l'on veut effacer le contenu du document
+	 * Actions ï¿½ rï¿½aliser lorsque l'on veut effacer le contenu du document
 	 */
 	private final ClearAction clearAction;
 
 	/**
-	 * Actions à  réaliser lorsque l'on veut envoyer un message au serveur
+	 * Actions ï¿½ rï¿½aliser lorsque l'on veut envoyer un message au serveur
 	 */
 	private final SendAction sendAction;
 
 	/**
-	 * Actions à  réaliser lorsque l'on veut envoyer un message au serveur
+	 * Actions ï¿½ rï¿½aliser lorsque l'on veut envoyer un message au serveur
 	 */
 	protected final QuitAction quitAction;
 	
@@ -117,15 +120,17 @@ public class ClientFrame2 extends AbstractClientFrame
 	private final KickSelectionAction kickSelectionAction;
 
 	/**
-	 * Référence à  la fenêtre courante (à  utiliser dans les classes internes)
+	 * Rï¿½fï¿½rence ï¿½ la fenï¿½tre courante (ï¿½ utiliser dans les classes internes)
 	 */
 	protected final JFrame thisRef;
+	private JCheckBoxMenuItem filterMenuItem;
+	private JToggleButton filterButton;
 
 	/**
-	 * Constructeur de la fenêtre
+	 * Constructeur de la fenï¿½tre
 	 * @param name le nom de l'utilisateur
-	 * @param host l'hà´te sur lequel on est connecté
-	 * @param commonRun état d'exécution des autres threads du client
+	 * @param host l'hï¿½te sur lequel on est connectï¿½
+	 * @param commonRun ï¿½tat d'exï¿½cution des autres threads du client
 	 * @param parentLogger le logger parent pour les messages
 	 * @throws HeadlessException
 	 */
@@ -142,13 +147,13 @@ public class ClientFrame2 extends AbstractClientFrame
 		// Flux d'IO
 		//---------------------------------------------------------------------
 		/*
-		 * Attention, la création du flux d'entrée doit (éventuellement) être
-		 * reportée jusqu'au lancement du run dans la mesure oà¹ le inPipe
-		 * peut ne pas encore être connecté à  un PipedOutputStream
+		 * Attention, la crï¿½ation du flux d'entrï¿½e doit (ï¿½ventuellement) ï¿½tre
+		 * reportï¿½e jusqu'au lancement du run dans la mesure oï¿½ le inPipe
+		 * peut ne pas encore ï¿½tre connectï¿½ ï¿½ un PipedOutputStream
 		 */
 
 		// --------------------------------------------------------------------
-		// Création des actions send, clear et quit
+		// Crï¿½ation des actions send, clear et quit
 		// --------------------------------------------------------------------
 
 		sendAction = new SendAction();
@@ -160,7 +165,7 @@ public class ClientFrame2 extends AbstractClientFrame
 
 		/*
 		 * Ajout d'un listener pour fermer correctement l'application lorsque
-		 * l'on ferme la fenêtre. WindowListener sur this
+		 * l'on ferme la fenï¿½tre. WindowListener sur this
 		 */
 		addWindowListener(new FrameWindowListener());
 
@@ -192,12 +197,10 @@ public class ClientFrame2 extends AbstractClientFrame
 		clearButton.setText("");
 		toolBar.add(clearButton);
 		
-		JButton filterButton = new JButton(filterAction);
+		filterButton = new JToggleButton(filterAction);
 		filterButton.setText("");
-		/*Border emptyBorder = BorderFactory.createEmptyBorder();
-		filterButton.setBorder(emptyBorder);*/
 		filterButton.setOpaque(false);
-		filterButton.setContentAreaFilled(false);
+		//filterButton.setContentAreaFilled(false);
 		filterButton.setBorderPainted(false);
 		toolBar.add(filterButton);
 		
@@ -254,7 +257,7 @@ public class ClientFrame2 extends AbstractClientFrame
 		JMenuItem clearMenuItem = new JMenuItem(clearAction);
 		messagesMenu.add(clearMenuItem);
 		
-		JMenuItem filterMenuItem = new JMenuItem(filterAction);
+		filterMenuItem = new JCheckBoxMenuItem(filterAction);
 		messagesMenu.add(filterMenuItem);
 		
 		JMenu usersMenu = new JMenu("Users");
@@ -344,7 +347,7 @@ public class ClientFrame2 extends AbstractClientFrame
 
 		// --------------------------------------------------------------------
 		// Documents
-		// récupération du document du textPane ainsi que du documentStyle et du
+		// rï¿½cupï¿½ration du document du textPane ainsi que du documentStyle et du
 		// defaultColor du document
 		//---------------------------------------------------------------------
 		document = textPane.getStyledDocument();
@@ -355,16 +358,16 @@ public class ClientFrame2 extends AbstractClientFrame
 	}
 
 	/**
-	 * Affichage d'un message dans le {@link #document}, puis passage à  la ligne
+	 * Affichage d'un message dans le {@link #document}, puis passage ï¿½ la ligne
 	 * (avec l'ajout de {@link Vocabulary#newLine})
-	 * La partie "[yyyy/MM/dd HH:mm:ss]" correspond à  la date/heure courante
-	 * obtenue grà¢ce à  un Calendar et est affichée avec la defaultColor alors
-	 * que la partie "utilisateur > message" doit être affichée avec une couleur
-	 * déterminée d'aprês le nom d'utilisateur avec
-	 * {@link #getColorFromName(String)}, le nom d'utilisateur est quant à  lui
-	 * déterminé d'aprês le message lui même avec {@link #parseName(String)}.
-	 * @param message le message à  afficher dans le {@link #document}
-	 * @throws BadLocationException si l'écriture dans le document échoue
+	 * La partie "[yyyy/MM/dd HH:mm:ss]" correspond ï¿½ la date/heure courante
+	 * obtenue grï¿½ce ï¿½ un Calendar et est affichï¿½e avec la defaultColor alors
+	 * que la partie "utilisateur > message" doit ï¿½tre affichï¿½e avec une couleur
+	 * dï¿½terminï¿½e d'aprï¿½s le nom d'utilisateur avec
+	 * {@link #getColorFromName(String)}, le nom d'utilisateur est quant ï¿½ lui
+	 * dï¿½terminï¿½ d'aprï¿½s le message lui mï¿½me avec {@link #parseName(String)}.
+	 * @param message le message ï¿½ afficher dans le {@link #document}
+	 * @throws BadLocationException si l'ï¿½criture dans le document ï¿½choue
 	 * @see {@link examples.widgets.ExampleFrame#appendToDocument(String, Color)}
 	 * @see java.text.SimpleDateFormat#SimpleDateFormat(String)
 	 * @see java.util.Calendar#getInstance()
@@ -376,8 +379,8 @@ public class ClientFrame2 extends AbstractClientFrame
 	protected void writeMessage(String message) throws BadLocationException
 	{
 		/*
-		 * ajout du message "[yyyy/MM/dd HH:mm:ss] utilisateur > message" à 
-		 * la fin du document avec la couleur déterminée d'aprês "utilisateur"
+		 * ajout du message "[yyyy/MM/dd HH:mm:ss] utilisateur > message" ï¿½
+		 * la fin du document avec la couleur dï¿½terminï¿½e d'aprï¿½s "utilisateur"
 		 * (voir AbstractClientFrame2#getColorFromName)
 		 */
 		StringBuffer sb = new StringBuffer();
@@ -400,7 +403,7 @@ public class ClientFrame2 extends AbstractClientFrame
 		                      sb.toString(),
 		                      documentStyle);
 
-		// Retour à  la couleur de texte par défaut
+		// Retour ï¿½ la couleur de texte par dï¿½faut
 		StyleConstants.setForeground(documentStyle, defaultColor);
 
 	}
@@ -408,18 +411,18 @@ public class ClientFrame2 extends AbstractClientFrame
 	/**
 	 * Recherche du nom d'utilisateur dans un message de type
 	 * "utilisateur > message".
-	 * parseName est utilisé pour extraire le nom d'utilisateur d'un message
-	 * afin d'utiliser le hashCode de ce nom pour créer une couleur dans
+	 * parseName est utilisï¿½ pour extraire le nom d'utilisateur d'un message
+	 * afin d'utiliser le hashCode de ce nom pour crï¿½er une couleur dans
 	 * laquelle
-	 * sera affiché le message de cet utilisateur (ainsi tous les messages d'un
-	 * même utilisateur auront la même couleur).
-	 * @param message le message à  parser
+	 * sera affichï¿½ le message de cet utilisateur (ainsi tous les messages d'un
+	 * mï¿½me utilisateur auront la mï¿½me couleur).
+	 * @param message le message ï¿½ parser
 	 * @return le nom d'utilisateur s'il y en a un sinon null
 	 */
 	protected String parseName(String message)
 	{
 		/*
-		 * renvoyer la chaine correspondant à  la partie "utilisateur" dans
+		 * renvoyer la chaine correspondant ï¿½ la partie "utilisateur" dans
 		 * un message contenant "utilisateur > message", ou bien null si cette
 		 * partie n'existe pas.
 		 */
@@ -446,7 +449,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	/**
 	 * Recherche du contenu du message dans un message de type
 	 * "utilisateur > message"
-	 * @param message le message à  parser
+	 * @param message le message ï¿½ parser
 	 * @return le contenu du message s'il y en a un sinon null
 	 */
 	protected String parseContent(String message)
@@ -582,8 +585,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 
 		/**
-		 * Opérations réalisées lorsque l'action est sollicitée
-		 * @param e évênement à  l'origine de l'action
+		 * Opï¿½rations rï¿½alisï¿½es lorsque l'action est sollicitï¿½e
+		 * @param e ï¿½vï¿½nement ï¿½ l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
@@ -592,7 +595,26 @@ public class ClientFrame2 extends AbstractClientFrame
 			/*
 			 * Effacer le contenu du document
 			 */
-			logger.warning("ALLAHUAKBAARABRABRABRABABRAB");
+			if(e.getSource().getClass() == JToggleButton.class){
+				JToggleButton jt = (JToggleButton)e.getSource();
+				if(jt.isSelected()){
+					filterMenuItem.setSelected(true);
+				}
+				else{
+					filterMenuItem.setSelected(false);
+				}
+				
+			}
+			else
+			{
+				JCheckBoxMenuItem jcb = (JCheckBoxMenuItem)e.getSource();
+				if(jcb.isSelected()){
+					filterButton.setSelected(true);
+				}
+				else{
+					filterButton.setSelected(false);
+				}
+			}
 			try
 			{
 				document.remove(0, document.getLength());
@@ -627,8 +649,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 
 		/**
-		 * Opérations réalisées lorsque l'action est sollicitée
-		 * @param e évênement à  l'origine de l'action
+		 * Opï¿½rations rï¿½alisï¿½es lorsque l'action est sollicitï¿½e
+		 * @param e ï¿½vï¿½nement ï¿½ l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
@@ -650,7 +672,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	}
 
 	/**
-	 * Listener lorsque le bouton #btnClear est activé. Efface le contenu du
+	 * Listener lorsque le bouton #btnClear est activï¿½. Efface le contenu du
 	 * {@link #document}
 	 */
 	protected class ClearAction extends AbstractAction
@@ -675,8 +697,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 
 		/**
-		 * Opérations réalisées lorsque l'action est sollicitée
-		 * @param e évênement à  l'origine de l'action
+		 * Opï¿½rations rï¿½alisï¿½es lorsque l'action est sollicitï¿½e
+		 * @param e ï¿½vï¿½nement ï¿½ l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
@@ -698,7 +720,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	}
 
 	/**
-	 * Action réalisée pour envoyer un message au serveur
+	 * Action rï¿½alisï¿½e pour envoyer un message au serveur
 	 */
 	protected class SendAction extends AbstractAction
 	{
@@ -722,15 +744,15 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 
 		/**
-		 * Opérations réalisées lorsque l'action est sollicitée
-		 * @param e évênement à  l'origine de l'action
+		 * Opï¿½rations rï¿½alisï¿½es lorsque l'action est sollicitï¿½e
+		 * @param e ï¿½vï¿½nement ï¿½ l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
 			/*
-			 * récupération du contenu du textfield et envoi du message au
+			 * rï¿½cupï¿½ration du contenu du textfield et envoi du message au
 			 * serveur (ssi le message n'est pas vide), puis effacement du
 			 * contenu du textfield.
 			 */
@@ -754,7 +776,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	}
 
 	/**
-	 * Action réalisée pour se délogguer du serveur
+	 * Action rï¿½alisï¿½e pour se dï¿½logguer du serveur
 	 */
 	private class QuitAction extends AbstractAction
 	{
@@ -778,8 +800,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 
 		/**
-		 * Opérations réalisées lorsque l'action "quitter" est sollicitée
-		 * @param e évênement à  l'origine de l'action
+		 * Opï¿½rations rï¿½alisï¿½es lorsque l'action "quitter" est sollicitï¿½e
+		 * @param e ï¿½vï¿½nement ï¿½ l'origine de l'action
 		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 		 */
 		@Override
@@ -804,13 +826,13 @@ public class ClientFrame2 extends AbstractClientFrame
 	}
 
 	/**
-	 * Classe gérant la fermeture correcte de la fenêtre. La fermeture correcte
-	 * de la fenêtre implique de lancer un cleanup
+	 * Classe gï¿½rant la fermeture correcte de la fenï¿½tre. La fermeture correcte
+	 * de la fenï¿½tre implique de lancer un cleanup
 	 */
 	protected class FrameWindowListener extends WindowAdapter
 	{
 		/**
-		 * Méthode déclenchée à  la fermeture de la fenêtre. Envoie la commande
+		 * Mï¿½thode dï¿½clenchï¿½e ï¿½ la fermeture de la fenï¿½tre. Envoie la commande
 		 * "bye" au serveur
 		 */
 		@Override
@@ -829,9 +851,9 @@ public class ClientFrame2 extends AbstractClientFrame
 	}
 
 	/**
-	 * Exécution de la boucle d'exécution. La boucle d'exécution consiste à  lire
-	 * une ligne sur le flux d'entrée avec un BufferedReader tant qu'une erreur
-	 * d'IO n'intervient pas indiquant que le flux a été coupé. Auquel cas on
+	 * Exï¿½cution de la boucle d'exï¿½cution. La boucle d'exï¿½cution consiste ï¿½ lire
+	 * une ligne sur le flux d'entrï¿½e avec un BufferedReader tant qu'une erreur
+	 * d'IO n'intervient pas indiquant que le flux a ï¿½tï¿½ coupï¿½. Auquel cas on
 	 * quitte la boucle principale et on ferme les flux d'I/O avec #cleanup()
 	 */
 	@Override
@@ -851,23 +873,23 @@ public class ClientFrame2 extends AbstractClientFrame
 			 * - Si cette ligne de texte n'est pas nulle on affiche le message
 			 * dans le document avec le format voulu en utilisant
 			 * #writeMessage(String)
-			 * - Aprês la fin de la boucle on change commonRun à  false de
-			 * maniêre synchronisée afin que les autres threads utilisant ce
-			 * commonRun puissent s'arrêter eux aussi :
+			 * - Aprï¿½s la fin de la boucle on change commonRun ï¿½ false de
+			 * maniï¿½re synchronisï¿½e afin que les autres threads utilisant ce
+			 * commonRun puissent s'arrï¿½ter eux aussi :
 			 * synchronized(commonRun)
 			 * {
 			 * commonRun = Boolean.FALSE;
 			 * }
-			 * Dans toutes les étapes si un problême survient (erreur,
-			 * exception, ...) on quitte la boucle en ayant au préalable ajouté
+			 * Dans toutes les ï¿½tapes si un problï¿½me survient (erreur,
+			 * exception, ...) on quitte la boucle en ayant au prï¿½alable ajoutï¿½
 			 * un "warning" ou un "severe" au logger (en fonction de l'erreur
-			 * rencontrée) et mis le commonRun à  false (de maniêre synchronisé).
+			 * rencontrï¿½e) et mis le commonRun ï¿½ false (de maniï¿½re synchronisï¿½).
 			 */
 			
 			try
 			{
 				/*
-				 * read from input (doit être bloquant)
+				 * read from input (doit ï¿½tre bloquant)
 				 */
 				messageIn = inBR.readLine();
 			}
@@ -879,7 +901,7 @@ public class ClientFrame2 extends AbstractClientFrame
 
 			if (messageIn != null)
 			{
-				// Ajouter le message à  la fin du document avec la couleur
+				// Ajouter le message ï¿½ la fin du document avec la couleur
 				// voulue
 				try
 				{
@@ -911,7 +933,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	}
 
 	/**
-	 * Fermeture de la fenêtre et des flux à  la fin de l'exécution
+	 * Fermeture de la fenï¿½tre et des flux ï¿½ la fin de l'exï¿½cution
 	 */
 	@Override
 	public void cleanup()
