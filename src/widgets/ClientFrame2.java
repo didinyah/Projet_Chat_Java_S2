@@ -94,12 +94,12 @@ public class ClientFrame2 extends AbstractClientFrame
 	 * Action � r�aliser lorsque l'on souhaite supprimer les �l�ments
 	 * s�lectionnn�s de la liste
 	 */
-	private final Action removeAction = new RemoveItemAction();
+	private final Action removeAction;
 
 	/**
 	 * Action � r�aliser lorsque l'on souhaite d�selctionner tous les �lements de la liste
 	 */
-	private final Action clearSelectionAction = new ClearSelectionAction();
+	private final Action clearSelectionAction;
 
 	/**
 	 * Actions � r�aliser lorsque l'on veut effacer le contenu du document
@@ -159,6 +159,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		sendAction = new SendAction();
 		clearAction = new ClearAction();
 		quitAction = new QuitAction();
+		removeAction = new RemoveItemAction();
+		clearSelectionAction = new ClearSelectionAction();
 		filterAction = new FilterAction();
 		kickSelectionAction = new KickSelectionAction();
 
@@ -862,6 +864,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		inBR = new BufferedReader(new InputStreamReader(inPipe));
 
 		String messageIn;
+		
+		
 
 		while (commonRun.booleanValue())
 		{
@@ -891,7 +895,9 @@ public class ClientFrame2 extends AbstractClientFrame
 				/*
 				 * read from input (doit �tre bloquant)
 				 */
+				logger.warning(inBR.toString());
 				messageIn = inBR.readLine();
+				logger.warning("efsefsef akbar");
 			}
 			catch (IOException e)
 			{
@@ -905,7 +911,9 @@ public class ClientFrame2 extends AbstractClientFrame
 				// voulue
 				try
 				{
+					logger.warning("allahy akbar og");
 					writeMessage(messageIn);
+					logger.warning("allahy akbar" + messageIn);
 				}
 				catch (BadLocationException e)
 				{
@@ -915,6 +923,7 @@ public class ClientFrame2 extends AbstractClientFrame
 			}
 			else // messageIn == null
 			{
+				logger.warning("allahy akbar 2");
 				break;
 			}
 		}
