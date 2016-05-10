@@ -169,6 +169,7 @@ class UserHandler implements Runnable
 				 * l'utilisateur on quitte la boucle
 				 */
 				if(userInput==Vocabulary.byeCmd){
+					logger.warning("UserHandler: Bye command entered");
 					break;
 				}
 			}
