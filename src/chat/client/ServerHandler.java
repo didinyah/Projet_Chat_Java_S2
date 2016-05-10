@@ -231,6 +231,7 @@ class ServerHandler implements Runnable
 						// TODO userOutPW...
 						userOutPW.println(message);
 						if(userOutPW.checkError()) {
+							logger.warning("run: Error while displaying message");
 							error = true;
 						}
 						break;
