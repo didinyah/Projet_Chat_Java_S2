@@ -772,6 +772,16 @@ public class ClientFrame2 extends AbstractClientFrame
 
 					// Effacement du contenu du textfield
 					sendTextField.setText("");
+					
+					// A ENLEVER
+					try {
+						document.insertString(document.getLength(),
+						          content,
+						          documentStyle);
+					} catch (BadLocationException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		}
@@ -895,9 +905,7 @@ public class ClientFrame2 extends AbstractClientFrame
 				/*
 				 * read from input (doit �tre bloquant)
 				 */
-				logger.warning(inBR.toString());
 				messageIn = inBR.readLine();
-				logger.warning("efsefsef akbar");
 			}
 			catch (IOException e)
 			{
@@ -911,9 +919,8 @@ public class ClientFrame2 extends AbstractClientFrame
 				// voulue
 				try
 				{
-					logger.warning("allahy akbar og");
+					
 					writeMessage(messageIn);
-					logger.warning("allahy akbar" + messageIn);
 				}
 				catch (BadLocationException e)
 				{
@@ -923,7 +930,6 @@ public class ClientFrame2 extends AbstractClientFrame
 			}
 			else // messageIn == null
 			{
-				logger.warning("allahy akbar 2");
 				break;
 			}
 		}

@@ -260,6 +260,8 @@ public class RunChatClient extends AbstractRunChat
 			}
 			else {
 				frame = new ClientFrame2(name, host, commonRun, logger);
+				// rajouter la ligne suivante sinon le chat ne s'affiche pas..
+				//guiVersion=1;
 			}
 
 			/*
