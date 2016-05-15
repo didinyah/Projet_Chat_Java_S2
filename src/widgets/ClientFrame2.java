@@ -207,6 +207,7 @@ public class ClientFrame2 extends AbstractClientFrame
 		filterButton.setBorderPainted(false);
 		toolBar.add(filterButton);
 		
+		
 		/*JLabel label = new JLabel(new ImageIcon(ClientFrame2.class
 	             .getResource("/icons/filled_filter-32.png")));
 		label.addMouseListener(new MouseAdapter() {
@@ -827,15 +828,6 @@ public class ClientFrame2 extends AbstractClientFrame
 			serverLabel.setText("");
 			thisRef.validate();
 
-			try
-			{
-				Thread.sleep(1000);
-			}
-			catch (InterruptedException e1)
-			{
-				return;
-			}
-
 			sendMessage(Vocabulary.byeCmd);
 			
 			if(e != null){
@@ -846,12 +838,11 @@ public class ClientFrame2 extends AbstractClientFrame
 	
 	public void kickCheck(String target){
 		if(target.compareTo(pseudo) == 0){
-			logger.warning("MDR");
 			quitAction.actionPerformed(null);
 			thisRef.dispatchEvent(new WindowEvent(thisRef, WindowEvent.WINDOW_CLOSING));
 		}
 		else{
-			logger.warning("target :" + target + " " + pseudo);
+			logger.warning("kick target :" + target + " " + pseudo);
 		}
 	}
 	
