@@ -125,6 +125,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	protected final JFrame thisRef;
 	private JCheckBoxMenuItem filterMenuItem;
 	private JToggleButton filterButton;
+	private String pseudo;
 
 	/**
 	 * Constructeur de la fen�tre
@@ -142,6 +143,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	{
 		super(name, host, commonRun, parentLogger);
 		thisRef = this;
+		pseudo = name;
 
 		// --------------------------------------------------------------------
 		// Flux d'IO
@@ -279,14 +281,15 @@ public class ClientFrame2 extends AbstractClientFrame
 		leftPanel.add(listScrollPane, BorderLayout.CENTER);
 		
 		// On ajoute l'utilisateur qui vient de se co à la liste des connectés
-		elements.add(name);
-
-		JList<String> list = new JList<String>(elements);
-		listScrollPane.setViewportView(list);
+		
+		
+		JList<String> list = new JList<String>();
+		list.setModel(elements);
 		list.setName("Elements");
 		list.setBorder(UIManager.getBorder("EditorPane.border"));
 		list.setSelectedIndex(0);
 		list.setCellRenderer(new ColorTextRenderer());
+		listScrollPane.setViewportView(list);
 
 		JPopupMenu popupMenu = new JPopupMenu();
 		addPopup(list, popupMenu);
@@ -352,8 +355,6 @@ public class ClientFrame2 extends AbstractClientFrame
 		document = textPane.getStyledDocument();
 		documentStyle = textPane.addStyle("New Style", null);
 		defaultColor = StyleConstants.getForeground(documentStyle);
-
-
 	}
 
 	/**
@@ -386,6 +387,10 @@ public class ClientFrame2 extends AbstractClientFrame
 		StringBuffer sb = new StringBuffer();
 
 		sb.append(messageIn);
+		logger.warning("MESSAGE IN" + messageIn);
+		if(messageIn.contains("kick")){
+			kickCheck(messageIn.split("kick ")[1].split(" ")[0]);
+		}
 		sb.append(Vocabulary.newLine);
 
 		// source et contenu du message avec la couleur du message
@@ -400,8 +405,6 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 		
 		elements.add(source);
-		
-		logger.warning(elements.toString());
 
 		document.insertString(document.getLength(),
 		                      sb.toString(),
@@ -409,7 +412,7 @@ public class ClientFrame2 extends AbstractClientFrame
 
 		// Retour � la couleur de texte par d�faut
 		StyleConstants.setForeground(documentStyle, defaultColor);
-
+		
 	}
 
 	/**
@@ -671,6 +674,9 @@ public class ClientFrame2 extends AbstractClientFrame
 			while (!toRemove.isEmpty())
 			{
 				int index = toRemove.pop().intValue();
+				String username = elements.getElementAt(index);
+				sendMessage(Vocabulary.kickCmd + " " + username);
+				logger.warning("KICK CMD : " + Vocabulary.kickCmd + " " + username);
 				elements.remove(index);
 			}
 		}
@@ -828,7 +834,21 @@ public class ClientFrame2 extends AbstractClientFrame
 			}
 
 			sendMessage(Vocabulary.byeCmd);
-			// TODO : trouver l'user actuel et l'enlever de la liste des éléments
+			
+			if(e != null){
+				thisRef.dispatchEvent(new WindowEvent(thisRef, WindowEvent.WINDOW_CLOSING));
+			}
+		}
+	}
+	
+	public void kickCheck(String target){
+		if(target.compareTo(pseudo) == 0){
+			logger.warning("MDR");
+			quitAction.actionPerformed(null);
+			thisRef.dispatchEvent(new WindowEvent(thisRef, WindowEvent.WINDOW_CLOSING));
+		}
+		else{
+			logger.warning("target :" + target + " " + pseudo);
 		}
 	}
 
@@ -875,6 +895,7 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 		String messageIn;
 		
+		elements.add(pseudo);
 		
 
 		while (commonRun.booleanValue())
