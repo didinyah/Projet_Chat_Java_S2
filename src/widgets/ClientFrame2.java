@@ -384,13 +384,17 @@ public class ClientFrame2 extends AbstractClientFrame
 		 * (voir AbstractClientFrame2#getColorFromName)
 		 */
 		
-		StringBuffer sb = new StringBuffer();
-
-		sb.append(messageIn);
-		logger.warning("MESSAGE IN" + messageIn);
+		
 		if(messageIn.contains("kick")){
 			kickCheck(messageIn.split("kick ")[1].split(" ")[0]);
 		}
+		else if(messageIn.contains(" logged out")){
+			logger.warning("PSEUDAL :" + messageIn.split(" logged out")[0].split(" ")[2]);
+			removeUserFromList(messageIn.split(" logged out")[0].split(" ")[2]);
+		}
+		StringBuffer sb = new StringBuffer();
+
+		sb.append(messageIn);
 		sb.append(Vocabulary.newLine);
 
 		// source et contenu du message avec la couleur du message
@@ -412,7 +416,6 @@ public class ClientFrame2 extends AbstractClientFrame
 
 		// Retour � la couleur de texte par d�faut
 		StyleConstants.setForeground(documentStyle, defaultColor);
-		
 	}
 
 	/**
@@ -849,6 +852,15 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 		else{
 			logger.warning("target :" + target + " " + pseudo);
+		}
+	}
+	
+	public void removeUserFromList(String target){
+		for(int i = 0; i<elements.getSize(); i++){
+			if(elements.getElementAt(i).compareTo(target) == 0){
+				elements.remove(i);
+				break;
+			}
 		}
 	}
 
