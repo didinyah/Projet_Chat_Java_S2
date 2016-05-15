@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.util.Stack;
+import java.util.Vector;
+import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
@@ -54,6 +57,7 @@ import javax.swing.text.StyleConstants;
 
 import models.Message;
 import models.NameSetListModel;
+import models.Message.MessageOrder;
 import chat.Vocabulary;
 import examples.widgets.ListExampleFrame.ColorTextRenderer;
 
@@ -117,6 +121,9 @@ public class ClientFrame2 extends AbstractClientFrame
 	protected final QuitAction quitAction;
 	
 	private final FilterAction filterAction;
+	private final SortDateAction sortDateAction;
+	private final SortAuthorAction sortAuthorAction;
+	private final SortContentAction sortContentAction;
 	private final KickSelectionAction kickSelectionAction;
 
 	/**
@@ -124,8 +131,12 @@ public class ClientFrame2 extends AbstractClientFrame
 	 */
 	protected final JFrame thisRef;
 	private JCheckBoxMenuItem filterMenuItem;
+	private JCheckBoxMenuItem sortDateMenuItem;
+	private JCheckBoxMenuItem sortAuthorMenuItem;
+	private JCheckBoxMenuItem sortContentMenuItem;
 	private JToggleButton filterButton;
 	private String pseudo;
+	private Vector<Message> messages = new Vector<Message>();
 
 	/**
 	 * Constructeur de la fen�tre
@@ -142,8 +153,11 @@ public class ClientFrame2 extends AbstractClientFrame
 	    throws HeadlessException
 	{
 		super(name, host, commonRun, parentLogger);
+		elements.add(name);
 		thisRef = this;
 		pseudo = name;
+		
+		
 
 		// --------------------------------------------------------------------
 		// Flux d'IO
@@ -164,6 +178,9 @@ public class ClientFrame2 extends AbstractClientFrame
 		clearSelectionAction = new ClearSelectionAction();
 		filterAction = new FilterAction();
 		kickSelectionAction = new KickSelectionAction();
+		sortDateAction = new SortDateAction();
+		sortAuthorAction = new SortAuthorAction();
+		sortContentAction = new SortContentAction();
 
 
 		/*
@@ -273,6 +290,21 @@ public class ClientFrame2 extends AbstractClientFrame
 		JMenuItem kickSelectionMenuItem = new JMenuItem(kickSelectionAction);
 		usersMenu.add(kickSelectionMenuItem);
 		
+		JMenu submenu = new JMenu("Sort");
+		submenu.setMnemonic(KeyEvent.VK_S);
+
+		sortDateMenuItem = new JCheckBoxMenuItem(sortDateAction);
+		submenu.add(sortDateMenuItem);
+		
+		sortAuthorMenuItem = new JCheckBoxMenuItem(sortAuthorAction);
+		submenu.add(sortAuthorMenuItem);
+		
+		sortContentMenuItem = new JCheckBoxMenuItem(sortContentAction);
+		submenu.add(sortContentMenuItem);
+		
+		messagesMenu.add(submenu);
+
+		
 		JPanel leftPanel = new JPanel();
 		leftPanel.setPreferredSize(new Dimension(170, 10));
 		getContentPane().add(leftPanel, BorderLayout.WEST);
@@ -285,10 +317,11 @@ public class ClientFrame2 extends AbstractClientFrame
 		
 		
 		JList<String> list = new JList<String>();
+		logger.severe(elements.toString());
 		list.setModel(elements);
 		list.setName("Elements");
 		list.setBorder(UIManager.getBorder("EditorPane.border"));
-		list.setSelectedIndex(0);
+		//list.setSelectedIndex(0);
 		list.setCellRenderer(new ColorTextRenderer());
 		listScrollPane.setViewportView(list);
 
@@ -377,7 +410,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	 * @see javax.swing.text.StyledDocument#insertString(int, String,
 	 * javax.swing.text.AttributeSet)
 	 */
-	protected void writeMessage(String messageIn) throws BadLocationException
+	protected void writeMessage(Message messageIn)
 	{
 		/*
 		 * ajout du message "[yyyy/MM/dd HH:mm:ss] utilisateur > message" �
@@ -386,12 +419,12 @@ public class ClientFrame2 extends AbstractClientFrame
 		 */
 		
 		
-		if(messageIn.contains("kick")){
-			kickCheck(messageIn.split("kick ")[1].split(" ")[0]);
+		if(messageIn.getContent().contains("kick")){
+			kickCheck(messageIn.getContent().split("kick ")[1].split(" ")[0]);
 		}
-		else if(messageIn.contains(" logged out")){
-			logger.warning("PSEUDAL :" + messageIn.split(" logged out")[0].split(" ")[2]);
-			removeUserFromList(messageIn.split(" logged out")[0].split(" ")[2]);
+		else if(messageIn.getContent().contains(" logged out")){
+			logger.warning("PSEUDAL :" + messageIn.getContent().split(" logged out")[0].split(" ")[2]);
+			removeUserFromList(messageIn.getContent().split(" logged out")[0].split(" ")[2]);
 		}
 		StringBuffer sb = new StringBuffer();
 
@@ -399,7 +432,7 @@ public class ClientFrame2 extends AbstractClientFrame
 		sb.append(Vocabulary.newLine);
 
 		// source et contenu du message avec la couleur du message
-		String source = parseName(messageIn);
+		String source = messageIn.getAuthor();
 		if ((source != null) && (source.length() > 0))
 		{
 			/*
@@ -411,9 +444,14 @@ public class ClientFrame2 extends AbstractClientFrame
 		
 		elements.add(source);
 
-		document.insertString(document.getLength(),
-		                      sb.toString(),
-		                      documentStyle);
+		try {
+			document.insertString(document.getLength(),
+			                      sb.toString(),
+			                      documentStyle);
+		} catch (BadLocationException e) {
+			logger.warning("ClientFrame2: clear doc: bad location");
+			logger.warning(e.getLocalizedMessage());
+		}
 
 		// Retour � la couleur de texte par d�faut
 		StyleConstants.setForeground(documentStyle, defaultColor);
@@ -573,10 +611,6 @@ public class ClientFrame2 extends AbstractClientFrame
 	
 	protected class FilterAction extends AbstractAction
 	{
-		/**
-		 * Constructeur d'une ClearAction : met en place le nom, la description,
-		 * le raccourci clavier et les small|Large icons de l'action
-		 */
 		public FilterAction()
 		{
 			putValue(SMALL_ICON,
@@ -603,13 +637,26 @@ public class ClientFrame2 extends AbstractClientFrame
 			/*
 			 * Effacer le contenu du document
 			 */
+			try {
+				document.remove(0, document.getLength());
+			} catch (BadLocationException ex) {
+				logger.warning("ClientFrame2: clear doc: bad location");
+				logger.warning(ex.getLocalizedMessage());
+			}
+			
+			Consumer<Message> messagePrinter = (Message m) -> writeMessage(m);
+			boolean actif = false;
+			
+			// Ici on gère le GUI pour lier les boutons et checkbox entre eux
 			if(e.getSource().getClass() == JToggleButton.class){
 				JToggleButton jt = (JToggleButton)e.getSource();
 				if(jt.isSelected()){
 					filterMenuItem.setSelected(true);
+					actif = true;
 				}
 				else{
 					filterMenuItem.setSelected(false);
+					actif = false;
 				}
 				
 			}
@@ -618,17 +665,172 @@ public class ClientFrame2 extends AbstractClientFrame
 				JCheckBoxMenuItem jcb = (JCheckBoxMenuItem)e.getSource();
 				if(jcb.isSelected()){
 					filterButton.setSelected(true);
+					actif = true;
 				}
 				else{
 					filterButton.setSelected(false);
+					actif = false;
 				}
 			}
-			try
-			{
-				document.remove(0, document.getLength());
+			
+			// Ici, on filtre les messages
+			
+			if(actif){
+				
+				Predicate<Message> selectionFilter = (Message m) ->
+	            {
+	                if (m != null)
+	                {
+	                    if (m.hasAuthor())
+	                    {
+	                        if (selectionModel.isSelectedIndex(elements.getIndex(m.getAuthor())))
+	                        {
+	                            return true;
+	                        }
+	                    }
+	                }
+	                return false;
+	            };
+				
+	            messages.stream().sorted().filter(selectionFilter).forEach(messagePrinter);
 			}
-			catch (BadLocationException ex)
-			{
+			else{
+				messages.stream().sorted().forEach(messagePrinter);
+			}
+		}
+	}
+	
+	protected class SortDateAction extends AbstractAction
+	{
+		public SortDateAction()
+		{
+			putValue(SMALL_ICON,
+			         new ImageIcon(ClientFrame2.class
+			             .getResource("/icons/clock-16.png")));
+			putValue(LARGE_ICON_KEY,
+			         new ImageIcon(ClientFrame2.class
+			             .getResource("/icons/clock-32.png")));
+			putValue(ACCELERATOR_KEY,
+			         KeyStroke.getKeyStroke(KeyEvent.VK_L,
+			                                InputEvent.META_MASK));
+			putValue(NAME, "By Date");
+			putValue(SHORT_DESCRIPTION, "Sort the messages by date");
+		}
+
+		/**
+		 * Op�rations r�alis�es lorsque l'action est sollicit�e
+		 * @param e �v�nement � l'origine de l'action
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+
+			JCheckBoxMenuItem jcb = (JCheckBoxMenuItem)e.getSource();
+			if(jcb.isSelected()){
+				Message.addOrder(MessageOrder.DATE);
+			}
+			else{
+				Message.removeOrder(MessageOrder.DATE);
+			}
+			try {
+				document.remove(0, document.getLength());
+				Consumer<Message> messagePrinter = (Message m) -> writeMessage(m);
+				messages.stream().sorted().forEach(messagePrinter);
+				
+			} catch (BadLocationException ex) {
+				logger.warning("ClientFrame2: clear doc: bad location");
+				logger.warning(ex.getLocalizedMessage());
+			}
+		}
+	}
+	
+	protected class SortAuthorAction extends AbstractAction
+	{
+		public SortAuthorAction()
+		{
+			putValue(SMALL_ICON,
+			         new ImageIcon(ClientFrame2.class
+			             .getResource("/icons/gender_neutral_user-16.png")));
+			putValue(LARGE_ICON_KEY,
+			         new ImageIcon(ClientFrame2.class
+			             .getResource("/icons/gender_neutral_user-32.png")));
+			putValue(ACCELERATOR_KEY,
+			         KeyStroke.getKeyStroke(KeyEvent.VK_L,
+			                                InputEvent.META_MASK));
+			putValue(NAME, "By Author");
+			putValue(SHORT_DESCRIPTION, "Sort the messages by author");
+		}
+
+		/**
+		 * Op�rations r�alis�es lorsque l'action est sollicit�e
+		 * @param e �v�nement � l'origine de l'action
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+
+			JCheckBoxMenuItem jcb = (JCheckBoxMenuItem)e.getSource();
+			if(jcb.isSelected()){
+				Message.addOrder(MessageOrder.AUTHOR);
+			}
+			else{
+				Message.removeOrder(MessageOrder.AUTHOR);
+			}
+			
+			try {
+				document.remove(0, document.getLength());
+				Consumer<Message> messagePrinter = (Message m) -> writeMessage(m);
+				messages.stream().sorted().forEach(messagePrinter);
+				
+			} catch (BadLocationException ex) {
+				logger.warning("ClientFrame2: clear doc: bad location");
+				logger.warning(ex.getLocalizedMessage());
+			}
+		}
+	}
+	
+	protected class SortContentAction extends AbstractAction
+	{
+		public SortContentAction()
+		{
+			putValue(SMALL_ICON,
+			         new ImageIcon(ClientFrame2.class
+			             .getResource("/icons/select_all-16.png")));
+			putValue(LARGE_ICON_KEY,
+			         new ImageIcon(ClientFrame2.class
+			             .getResource("/icons/select_all-32.png")));
+			putValue(ACCELERATOR_KEY,
+			         KeyStroke.getKeyStroke(KeyEvent.VK_L,
+			                                InputEvent.META_MASK));
+			putValue(NAME, "By Content");
+			putValue(SHORT_DESCRIPTION, "Sort the messages by content");
+		}
+
+		/**
+		 * Op�rations r�alis�es lorsque l'action est sollicit�e
+		 * @param e �v�nement � l'origine de l'action
+		 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+		 */
+		@Override
+		public void actionPerformed(ActionEvent e)
+		{
+
+			JCheckBoxMenuItem jcb = (JCheckBoxMenuItem)e.getSource();
+			if(jcb.isSelected()){
+				Message.addOrder(MessageOrder.CONTENT);
+			}
+			else{
+				Message.removeOrder(MessageOrder.CONTENT);
+			}
+			
+			try {
+				document.remove(0, document.getLength());
+				Consumer<Message> messagePrinter = (Message m) -> writeMessage(m);
+				messages.stream().sorted().forEach(messagePrinter);
+				
+			} catch (BadLocationException ex) {
 				logger.warning("ClientFrame2: clear doc: bad location");
 				logger.warning(ex.getLocalizedMessage());
 			}
@@ -637,10 +839,6 @@ public class ClientFrame2 extends AbstractClientFrame
 	
 	protected class KickSelectionAction extends AbstractAction
 	{
-		/**
-		 * Constructeur d'une ClearAction : met en place le nom, la description,
-		 * le raccourci clavier et les small|Large icons de l'action
-		 */
 		public KickSelectionAction()
 		{
 			putValue(SMALL_ICON,
@@ -725,6 +923,7 @@ public class ClientFrame2 extends AbstractClientFrame
 			try
 			{
 				document.remove(0, document.getLength());
+				messages.clear();
 			}
 			catch (BadLocationException ex)
 			{
@@ -893,12 +1092,11 @@ public class ClientFrame2 extends AbstractClientFrame
 		try {
 			ois = new ObjectInputStream(inPipe);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			logger.warning("ClientFrame2: I/O Error reading");
 		}
-		String messageIn;
+		Message messageIn;
 		
-		elements.add(pseudo);
+		//elements.add(pseudo);
 		
 
 		while (commonRun.booleanValue())
@@ -930,7 +1128,7 @@ public class ClientFrame2 extends AbstractClientFrame
 				 * read from input (doit �tre bloquant)
 				 */
 				//messageIn = inBR.readLine();
-				messageIn = ois.readObject().toString();
+				messageIn = (Message) ois.readObject();
 			}
 			catch (IOException | ClassNotFoundException e)
 			{
@@ -940,18 +1138,8 @@ public class ClientFrame2 extends AbstractClientFrame
 
 			if (messageIn != null)
 			{
-				// Ajouter le message � la fin du document avec la couleur
-				// voulue
-				try
-				{
-					
-					writeMessage(messageIn);
-				}
-				catch (BadLocationException e)
-				{
-					logger.warning("ClientFrame2: write at bad location: "
-					    + e.getLocalizedMessage());
-				}
+				messages.add(messageIn);
+				writeMessage(messageIn);
 			}
 			else // messageIn == null
 			{
@@ -981,7 +1169,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		logger.info("ClientFrame2::cleanup: closing input buffered reader ... ");
 		try
 		{
-			inBR.close();
+			//inBR.close();
+			ois.close();
 		}
 		catch (IOException e)
 		{

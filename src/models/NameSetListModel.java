@@ -154,6 +154,18 @@ public class NameSetListModel extends AbstractListModel<String>
 			return null;
 		}
 	}
+	
+	public int getIndex(String name)
+	{
+		int res = getSize();
+		for (int i = 0; i < getSize(); ++i) {
+			if (this.getElementAt(i).equals(name)) {
+				res = i;
+			}
+		}
+			
+		return res;
+	}
 
 	/**
 	 * Représentation sous forme de chaine de caractères de la liste de
