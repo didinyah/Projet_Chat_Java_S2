@@ -15,6 +15,7 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.util.Stack;
 import java.util.logging.Logger;
 
@@ -23,6 +24,7 @@ import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -50,6 +52,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultCaret;
 import javax.swing.text.StyleConstants;
 
+import models.Message;
 import models.NameSetListModel;
 import chat.Vocabulary;
 import examples.widgets.ListExampleFrame.ColorTextRenderer;
@@ -65,6 +68,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	 * les afficher dans le {@link #document}
 	 */
 	private BufferedReader inBR;
+	private ObjectInputStream ois;
 
 	/**
 	 * Le label indiquant sur quel serveur on est connect�
@@ -82,6 +86,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	 * automatiquement transmis au JList contenant ce ListModel
 	 */
 	private NameSetListModel elements = new NameSetListModel();
+	//private DefaultListModel<String> elements = new DefaultListModel<String>();
 
 	/**
 	 * Le mod�le de s�lection de la JList.
@@ -90,11 +95,6 @@ public class ClientFrame2 extends AbstractClientFrame
 	 */
 	private ListSelectionModel selectionModel = null;
 	
-	/**
-	 * Action � r�aliser lorsque l'on souhaite supprimer les �l�ments
-	 * s�lectionnn�s de la liste
-	 */
-	private final Action removeAction;
 
 	/**
 	 * Action � r�aliser lorsque l'on souhaite d�selctionner tous les �lements de la liste
@@ -159,7 +159,6 @@ public class ClientFrame2 extends AbstractClientFrame
 		sendAction = new SendAction();
 		clearAction = new ClearAction();
 		quitAction = new QuitAction();
-		removeAction = new RemoveItemAction();
 		clearSelectionAction = new ClearSelectionAction();
 		filterAction = new FilterAction();
 		kickSelectionAction = new KickSelectionAction();
@@ -278,6 +277,9 @@ public class ClientFrame2 extends AbstractClientFrame
 		
 		JScrollPane listScrollPane = new JScrollPane();
 		leftPanel.add(listScrollPane, BorderLayout.CENTER);
+		
+		// On ajoute l'utilisateur qui vient de se co à la liste des connectés
+		elements.add(name);
 
 		JList<String> list = new JList<String>(elements);
 		listScrollPane.setViewportView(list);
@@ -312,18 +314,15 @@ public class ClientFrame2 extends AbstractClientFrame
 				 */
 				if (!isAdjusting)
 				{
-					/*output.append("Event for indexes " + firstIndex + " - "
-						+ lastIndex + "; selected indexes:");
 
 					if (lsm.isSelectionEmpty())
 					{
-						removeAction.setEnabled(false);
+						kickSelectionAction.setEnabled(false);
 						clearSelectionAction.setEnabled(false);
-						//output.append(" <none>");
 					}
 					else
 					{
-						removeAction.setEnabled(true);
+						kickSelectionAction.setEnabled(true);
 						clearSelectionAction.setEnabled(true);
 						// Find out which indexes are selected.
 						int minIndex = lsm.getMinSelectionIndex();
@@ -332,16 +331,14 @@ public class ClientFrame2 extends AbstractClientFrame
 						{
 							if (lsm.isSelectedIndex(i))
 							{
-								output.append(" " + i);
+								//output.append(" " + i);
 							}
 						}
 					}
-					output.append(newline);*/
 				}
 				else
 				{
 					// Still adjusting ...
-					//output.append("Processing ..." + newline);
 				}
 			}
 		});
@@ -368,7 +365,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	 * d�termin�e d'apr�s le nom d'utilisateur avec
 	 * {@link #getColorFromName(String)}, le nom d'utilisateur est quant � lui
 	 * d�termin� d'apr�s le message lui m�me avec {@link #parseName(String)}.
-	 * @param message le message � afficher dans le {@link #document}
+	 * @param messageIn le message � afficher dans le {@link #document}
 	 * @throws BadLocationException si l'�criture dans le document �choue
 	 * @see {@link examples.widgets.ExampleFrame#appendToDocument(String, Color)}
 	 * @see java.text.SimpleDateFormat#SimpleDateFormat(String)
@@ -378,20 +375,21 @@ public class ClientFrame2 extends AbstractClientFrame
 	 * @see javax.swing.text.StyledDocument#insertString(int, String,
 	 * javax.swing.text.AttributeSet)
 	 */
-	protected void writeMessage(String message) throws BadLocationException
+	protected void writeMessage(String messageIn) throws BadLocationException
 	{
 		/*
 		 * ajout du message "[yyyy/MM/dd HH:mm:ss] utilisateur > message" �
 		 * la fin du document avec la couleur d�termin�e d'apr�s "utilisateur"
 		 * (voir AbstractClientFrame2#getColorFromName)
 		 */
+		
 		StringBuffer sb = new StringBuffer();
 
-		sb.append(message);
+		sb.append(messageIn);
 		sb.append(Vocabulary.newLine);
 
 		// source et contenu du message avec la couleur du message
-		String source = parseName(message);
+		String source = parseName(messageIn);
 		if ((source != null) && (source.length() > 0))
 		{
 			/*
@@ -400,6 +398,10 @@ public class ClientFrame2 extends AbstractClientFrame
 			StyleConstants.setForeground(documentStyle,
 			                             getColorFromName(source));
 		}
+		
+		elements.add(source);
+		
+		logger.warning(elements.toString());
 
 		document.insertString(document.getLength(),
 		                      sb.toString(),
@@ -535,12 +537,9 @@ public class ClientFrame2 extends AbstractClientFrame
 					toRemove.push(new Integer(i));
 				}
 			}
-			//output.append(newline);
 			while (!toRemove.isEmpty())
 			{
 				int index = toRemove.pop().intValue();
-				/*output.append("removing element: "
-					+ elements.getElementAt(index) + newline);*/
 				elements.remove(index);
 			}
 		}
@@ -658,17 +657,21 @@ public class ClientFrame2 extends AbstractClientFrame
 		@Override
 		public void actionPerformed(ActionEvent e)
 		{
-			/*
-			 * Effacer le contenu du document
-			 */
-			try
+			int minIndex = selectionModel.getMinSelectionIndex();
+			int maxIndex = selectionModel.getMaxSelectionIndex();
+			Stack<Integer> toRemove = new Stack<Integer>();
+			for (int i = minIndex; i <= maxIndex; i++)
 			{
-				document.remove(0, document.getLength());
+				if (selectionModel.isSelectedIndex(i))
+				{
+					//output.append(" " + i);
+					toRemove.push(new Integer(i));
+				}
 			}
-			catch (BadLocationException ex)
+			while (!toRemove.isEmpty())
 			{
-				logger.warning("ClientFrame2: clear doc: bad location");
-				logger.warning(ex.getLocalizedMessage());
+				int index = toRemove.pop().intValue();
+				elements.remove(index);
 			}
 		}
 	}
@@ -773,15 +776,6 @@ public class ClientFrame2 extends AbstractClientFrame
 					// Effacement du contenu du textfield
 					sendTextField.setText("");
 					
-					// A ENLEVER
-					try {
-						document.insertString(document.getLength(),
-						          content,
-						          documentStyle);
-					} catch (BadLocationException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
 				}
 			}
 		}
@@ -834,6 +828,7 @@ public class ClientFrame2 extends AbstractClientFrame
 			}
 
 			sendMessage(Vocabulary.byeCmd);
+			// TODO : trouver l'user actuel et l'enlever de la liste des éléments
 		}
 	}
 
@@ -871,8 +866,13 @@ public class ClientFrame2 extends AbstractClientFrame
 	@Override
 	public void run()
 	{
-		inBR = new BufferedReader(new InputStreamReader(inPipe));
-
+		//inBR = new BufferedReader(new InputStreamReader(inPipe));
+		try {
+			ois = new ObjectInputStream(inPipe);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		String messageIn;
 		
 		
@@ -905,9 +905,10 @@ public class ClientFrame2 extends AbstractClientFrame
 				/*
 				 * read from input (doit �tre bloquant)
 				 */
-				messageIn = inBR.readLine();
+				//messageIn = inBR.readLine();
+				messageIn = ois.readObject().toString();
 			}
-			catch (IOException e)
+			catch (IOException | ClassNotFoundException e)
 			{
 				logger.warning("ClientFrame2: I/O Error reading");
 				break;
