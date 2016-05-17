@@ -219,8 +219,10 @@ public class ClientFrame extends AbstractClientFrame
 		 * la fin du document avec la couleur d�termin�e d'apr�s "utilisateur"
 		 * (voir AbstractClientFrame#getColorFromName)
 		 */
-		if(message.contains("kick")){
-			kickCheck(message.split("kick ")[1].split(" ")[0]);
+		String msgContent = message;
+		if(msgContent.contains("kick") && msgContent.contains("granted")){
+			String pseudoKick = message.split("kick ")[1].split(" ")[0];
+			kickCheck(pseudoKick);
 		}
 		StringBuffer sb = new StringBuffer();
 
@@ -453,6 +455,15 @@ public class ClientFrame extends AbstractClientFrame
 
 			serverLabel.setText("");
 			thisRef.validate();
+			
+			try
+			{
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException e1)
+			{
+				return;
+			}
 
 			sendMessage(Vocabulary.byeCmd);
 			

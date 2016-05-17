@@ -4,25 +4,25 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.swing.AbstractListModel;
+import javax.swing.*;
 
 /**
- * ListModel contenant des noms uniques (toujours trié grâce à  un TreeSet par
+ * ListModel contenant des noms uniques (toujours triÃ© grÃ¢ce Ã  un TreeSet par
  * exemple).
- * L'accès à  la liste de noms doit être thread safe (c'à d : plusieurs threads
- * peuvent accéder concurrentiellement à  la liste de noms sans que celle ci se
- * retrouve dans un état incohérent) : Les modifications du Set interne se font
+ * L'accÃ¨s Ã  la liste de noms doit Ãªtre thread safe (c'Ã d : plusieurs threads
+ * peuvent accÃ©der concurrentiellement Ã  la liste de noms sans que celle ci se
+ * retrouve dans un Ã©tat incohÃ©rent) : Les modifications du Set interne se font
  * toujours dans un bloc synchronized(nameSet) {...}.
- * L'ajout ou le retrait d'un élément dans l'ensemble de nom est accompagné
- * d'un fireContentsChanged sur l'ensemble des éléments de la liste (à  cause
- * du tri implicite des éléments) ce qui permet au List Model de notifier
+ * L'ajout ou le retrait d'un Ã©lÃ©ment dans l'ensemble de nom est accompagnÃ©
+ * d'un fireContentsChanged sur l'ensemble des Ã©lÃ©ments de la liste (Ã  cause
+ * du tri implicite des Ã©lÃ©ments) ce qui permet au List Model de notifier
  * tout widget dans lequel serait contenu ce ListModel.
  * @see {@link javax.swing.AbstractListModel}
  */
 public class NameSetListModel extends AbstractListModel<String>
 {
 	/**
-	 * Ensemble de noms triés
+	 * Ensemble de noms triÃ©s
 	 */
 	private SortedSet<String> nameSet;
 
@@ -31,147 +31,119 @@ public class NameSetListModel extends AbstractListModel<String>
 	 */
 	public NameSetListModel()
 	{
-		// TODO nameSet = ...
-		nameSet = new TreeSet<String>();
+		nameSet = new TreeSet<>();
 	}
 
 	/**
-	 * Ajout d'un élément
-	 * @param value la valeur à  ajouter
-	 * @return true si l'élément à  ajouter est non null et qu'il n'était pas
-	 * déjà  présent dans l'ensemble et false sinon.
+	 * Ajout d'un Ã©lÃ©ment
+	 * @param value la valeur Ã  ajouter
+	 * @return true si l'Ã©lÃ©ment Ã  ajouter est non null et qu'il n'Ã©tait pas
+	 * dÃ©jÃ  prÃ©sent dans l'ensemble et false sinon.
 	 * @warning Ne pas oublier de faire un
 	 * {@link #fireContentsChanged(Object, int, int)} lorsqu'un nom est
-	 * effectivement ajouté à  l'ensemble des noms
+	 * effectivement ajoutÃ© Ã  l'ensemble des noms
 	 */
 	public boolean add(String value)
 	{
-		// TODO Replace with implementation ...
-		if(value==null) {
-			return false;
-		}
-		else {
-			// si l'élément est déjà contenu, on ne fait rien, sinon on l'ajoute
-			if(this.contains(value)) {
-				return false;
-			}
-			else {
+		if(value != null) {
 				nameSet.add(value);
-				fireContentsChanged(this, 0, getSize());
+				fireContentsChanged(this, 0, nameSet.size()-1);
 				return true;
-			}
 		}
+
+		return false;
 	}
 
 	/**
-	 * Teste si l'ensemble de noms contient le nom passé en argument
-	 * @param value le nom à  rechercher
+	 * Teste si l'ensemble de noms contient le nom passÃ© en argument
+	 * @param value le nom Ã  rechercher
 	 * @return true si l'ensemble de noms contient "value", false sinon.
 	 */
 	public boolean contains(String value)
 	{
-		// TODO Replace with implementation ...
-		if(nameSet.contains(value)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-		
+		return(nameSet.contains(value));
 	}
 
 	/**
-	 * Retrait de l'élément situé à  l'index index
-	 * @param index l'index de l'élément à  supprimer
-	 * @return true si l'élément a été supprimé, false sinon
+	 * Retrait de l'Ã©lÃ©ment situÃ© Ã  l'index index
+	 * @param index l'index de l'Ã©lÃ©ment Ã  supprimer
+	 * @return true si l'Ã©lÃ©ment a Ã©tÃ© supprimÃ©, false sinon
 	 * @warning Ne pas oublier de faire un
 	 * {@link #fireContentsChanged(Object, int, int)} lorsqu'un nom est
-	 * effectivement supprimé de l'ensemble des noms
+	 * effectivement supprimÃ© de l'ensemble des noms
 	 */
 	public boolean remove(int index)
 	{
-		// TODO Replace with implementation ...
-		// Il faut que l'index soit valide ( >0 et <taille et que la liste ne soit pas vide)
-		if(index >=0 && index < this.getSize() && this.getSize()>0) {
-			String toRemove = this.getElementAt(index);
-			nameSet.remove(toRemove);
-			fireContentsChanged(this, 0, getSize());
-			return true;
-		}
-		else {
-			return false;
-		}
+		int count = 0;
+		Iterator it = nameSet.iterator();
 		
+		while(it.hasNext()){
+			it.next();
+			if(count == index){
+				it.remove();
+				fireContentsChanged(this, 0, nameSet.size()-1);
+				return true;
+			}
+			count++;
+		}
+
+		return false;
 	}
 
 	/**
 	 * Efface l'ensemble du contenu de la liste
 	 * @warning ne pas oublier de faire un
 	 * {@link #fireContentsChanged(Object, int, int)} lorsque le contenu est
-	 * effectivement effacé (si non vide)
+	 * effectivement effacÃ© (si non vide)
 	 */
 	public void clear()
 	{
-		// TODO Complete ...
 		nameSet.removeAll(nameSet);
-		fireContentsChanged(this, 0, getSize());
+		fireContentsChanged(this, 0, nameSet.size()-1);
 	}
 
 	/**
-	 * Nombre d'éléments dans le ListModel
-	 * @return le nombre d'éléments dans le modèle de la liste
+	 * Nombre d'Ã©lÃ©ments dans le ListModel
+	 * @return le nombre d'Ã©lÃ©ments dans le modÃ¨le de la liste
 	 * @see javax.swing.ListModel#getSize()
 	 */
 	@Override
 	public int getSize()
 	{
-		// TODO Replace with implementation ...
 		return nameSet.size();
 	}
 
 	/**
-	 * Accesseur à  l'élément indexé
-	 * @param l'index de l'élément recherché
-	 * @return la chaine de caractère correponsdant à  l'élément recherché ou
+	 * Accesseur Ã  l'Ã©lÃ©ment indexÃ©
+	 * @param index l'index de l'Ã©lÃ©ment recherchÃ©
+	 * @return la chaine de caractÃ¨re correponsdant Ã  l'Ã©lÃ©ment recherchÃ© ou
 	 * bien null si celui ci n'existe pas
 	 * @see javax.swing.ListModel#getElementAt(int)
 	 */
 	@Override
 	public String getElementAt(int index)
 	{
-		// TODO Replace with implementation ...
-		if(index >=0 && index < this.getSize() && this.getSize()>0) {
-			String res="";
-			Iterator<String> it = nameSet.iterator();
-			int i = 0;
-			while (i!=index && it.hasNext()) {
-				res = it.next();
-				i++;
-			}
-			return res;
-		}
-		else {
-			return null;
-		}
-	}
-	
-	public int getIndex(String name)
-	{
-		int res = getSize();
-		for (int i = 0; i < getSize(); ++i) {
-			if (this.getElementAt(i).equals(name)) {
-				res = i;
+		String res = null;
+		
+		if(index >= 0 && index < this.getSize() && this.getSize() > 0){
+			int count = 0;
+			Iterator it = nameSet.iterator();
+			while(it.hasNext()){
+				String next = (String) it.next();
+				if(count == index){
+					res = next;
+				}
+				count++;
 			}
 		}
-			
 		return res;
 	}
 
 	/**
-	 * Représentation sous forme de chaine de caractères de la liste de
-	 * noms unique et triés.
-	 * @return une chaine de caractères représetant la liste des noms uniques
-	 * et triés
+	 * ReprÃ©sentation sous forme de chaine de caractÃ¨res de la liste de
+	 * noms unique et triÃ©s.
+	 * @return une chaine de caractÃ¨res reprÃ©setant la liste des noms uniques
+	 * et triÃ©s
 	 */
 	@Override
 	public String toString()
@@ -186,5 +158,21 @@ public class NameSetListModel extends AbstractListModel<String>
 			}
 		}
 		return sb.toString();
+	}
+
+	//Retourner l'index d'un Ã©lÃ©ment du set
+	public int getIndex(String s)
+	{
+		Iterator i = nameSet.iterator();
+		int count = 0;
+
+		while(i.hasNext()){
+			if(i.next().equals(s)){
+				break;
+			}
+			count++;
+		}
+
+		return count-1;
 	}
 }

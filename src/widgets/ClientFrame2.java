@@ -16,6 +16,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
+import java.util.Random;
 import java.util.Stack;
 import java.util.Vector;
 import java.util.function.Consumer;
@@ -137,6 +138,7 @@ public class ClientFrame2 extends AbstractClientFrame
 	private JToggleButton filterButton;
 	private String pseudo;
 	private Vector<Message> messages = new Vector<Message>();
+	private boolean activeFilter = false;
 
 	/**
 	 * Constructeur de la fen�tre
@@ -205,10 +207,12 @@ public class ClientFrame2 extends AbstractClientFrame
 
 		JButton clearSelection = new JButton(clearSelectionAction);
 		clearSelection.setText("");
+		clearSelection.setEnabled(false);
 		toolBar.add(clearSelection);
 		
 		JButton kickSelection = new JButton(kickSelectionAction);
 		kickSelection.setText("");
+		kickSelection.setEnabled(false);
 		toolBar.add(kickSelection);
 		
 		toolBar.add(Box.createHorizontalStrut(20));
@@ -220,6 +224,7 @@ public class ClientFrame2 extends AbstractClientFrame
 		filterButton = new JToggleButton(filterAction);
 		filterButton.setText("");
 		filterButton.setOpaque(false);
+		filterButton.setEnabled(false);
 		//filterButton.setContentAreaFilled(false);
 		filterButton.setBorderPainted(false);
 		toolBar.add(filterButton);
@@ -279,15 +284,18 @@ public class ClientFrame2 extends AbstractClientFrame
 		messagesMenu.add(clearMenuItem);
 		
 		filterMenuItem = new JCheckBoxMenuItem(filterAction);
+		filterMenuItem.setEnabled(false);
 		messagesMenu.add(filterMenuItem);
 		
 		JMenu usersMenu = new JMenu("Users");
 		menuBar.add(usersMenu);
 
 		JMenuItem clearSelectionMenuItem = new JMenuItem(clearSelectionAction);
+		clearSelectionMenuItem.setEnabled(false);
 		usersMenu.add(clearSelectionMenuItem);
 		
 		JMenuItem kickSelectionMenuItem = new JMenuItem(kickSelectionAction);
+		kickSelectionMenuItem.setEnabled(false);
 		usersMenu.add(kickSelectionMenuItem);
 		
 		JMenu submenu = new JMenu("Sort");
@@ -316,14 +324,13 @@ public class ClientFrame2 extends AbstractClientFrame
 		// On ajoute l'utilisateur qui vient de se co à la liste des connectés
 		
 		
-		JList<String> list = new JList<String>();
-		logger.severe(elements.toString());
-		list.setModel(elements);
+		JList<String> list = new JList<String>(elements);
+		//logger.severe(elements.toString());
 		list.setName("Elements");
 		list.setBorder(UIManager.getBorder("EditorPane.border"));
 		//list.setSelectedIndex(0);
 		list.setCellRenderer(new ColorTextRenderer());
-		//list.setForeground(getColorFromName(pseudo));
+		list.setForeground(new Color(new Random(pseudo.hashCode()).nextInt()).darker());
 		listScrollPane.setViewportView(list);
 
 		JPopupMenu popupMenu = new JPopupMenu();
@@ -355,13 +362,27 @@ public class ClientFrame2 extends AbstractClientFrame
 
 					if (lsm.isSelectionEmpty())
 					{
+						filterMenuItem.setEnabled(false);
+						clearSelectionMenuItem.setEnabled(false);
+						kickSelectionMenuItem.setEnabled(false);
 						kickSelectionAction.setEnabled(false);
 						clearSelectionAction.setEnabled(false);
+						filterAction.setEnabled(false);
+						kickSelection.setEnabled(false);
+						clearSelection.setEnabled(false);
+						filterButton.setEnabled(false);
 					}
 					else
 					{
+						filterMenuItem.setEnabled(true);
+						clearSelectionMenuItem.setEnabled(true);
+						kickSelectionMenuItem.setEnabled(true);
 						kickSelectionAction.setEnabled(true);
 						clearSelectionAction.setEnabled(true);
+						filterAction.setEnabled(true);
+						kickSelection.setEnabled(true);
+						clearSelection.setEnabled(true);
+						filterButton.setEnabled(true);
 						// Find out which indexes are selected.
 						int minIndex = lsm.getMinSelectionIndex();
 						int maxIndex = lsm.getMaxSelectionIndex();
@@ -419,13 +440,14 @@ public class ClientFrame2 extends AbstractClientFrame
 		 * (voir AbstractClientFrame2#getColorFromName)
 		 */
 		
-		
-		if(messageIn.getContent().contains("kick")){
-			kickCheck(messageIn.getContent().split("kick ")[1].split(" ")[0]);
+		String msgContent = messageIn.getContent();
+		if(msgContent.contains("kick") && msgContent.contains("granted")){
+			String pseudoKick = messageIn.getContent().split("kick ")[1].split(" ")[0];
+			kickCheck(pseudoKick);
+			removeUserFromList(pseudoKick);
 		}
-		else if(messageIn.getContent().contains(" logged out")){
-			logger.warning("PSEUDAL :" + messageIn.getContent().split(" logged out")[0].split(" ")[2]);
-			removeUserFromList(messageIn.getContent().split(" logged out")[0].split(" ")[2]);
+		else if(msgContent.contains(" logged out")){
+			removeUserFromList(msgContent.split(" logged out")[0]);
 		}
 		StringBuffer sb = new StringBuffer();
 
@@ -439,11 +461,11 @@ public class ClientFrame2 extends AbstractClientFrame
 			/*
 			 * Changement de couleur du texte
 			 */
-			StyleConstants.setForeground(documentStyle,
-			                             getColorFromName(source));
+			StyleConstants.setForeground(documentStyle,new Color(source.hashCode()).darker());
 		}
-		
+		logger.severe("Avant : " + elements.toString());
 		elements.add(source);
+		logger.severe("Après : " + elements.toString());
 
 		try {
 			document.insertString(document.getLength(),
@@ -646,18 +668,17 @@ public class ClientFrame2 extends AbstractClientFrame
 			}
 			
 			Consumer<Message> messagePrinter = (Message m) -> writeMessage(m);
-			boolean actif = false;
 			
 			// Ici on gère le GUI pour lier les boutons et checkbox entre eux
 			if(e.getSource().getClass() == JToggleButton.class){
 				JToggleButton jt = (JToggleButton)e.getSource();
 				if(jt.isSelected()){
 					filterMenuItem.setSelected(true);
-					actif = true;
+					activeFilter = true;
 				}
 				else{
 					filterMenuItem.setSelected(false);
-					actif = false;
+					activeFilter = false;
 				}
 				
 			}
@@ -666,17 +687,17 @@ public class ClientFrame2 extends AbstractClientFrame
 				JCheckBoxMenuItem jcb = (JCheckBoxMenuItem)e.getSource();
 				if(jcb.isSelected()){
 					filterButton.setSelected(true);
-					actif = true;
+					activeFilter = true;
 				}
 				else{
 					filterButton.setSelected(false);
-					actif = false;
+					activeFilter = false;
 				}
 			}
 			
 			// Ici, on filtre les messages
 			
-			if(actif){
+			if(activeFilter){
 				
 				Predicate<Message> selectionFilter = (Message m) ->
 	            {
@@ -880,7 +901,6 @@ public class ClientFrame2 extends AbstractClientFrame
 				String username = elements.getElementAt(index);
 				sendMessage(Vocabulary.kickCmd + " " + username);
 				logger.warning("KICK CMD : " + Vocabulary.kickCmd + " " + username);
-				elements.remove(index);
 			}
 		}
 	}
@@ -1027,7 +1047,14 @@ public class ClientFrame2 extends AbstractClientFrame
 
 			serverLabel.setText("");
 			thisRef.validate();
-
+			try
+			{
+				Thread.sleep(1000);
+			}
+			catch (InterruptedException e1)
+			{
+				return;
+			}
 			sendMessage(Vocabulary.byeCmd);
 			
 			if(e != null){
@@ -1097,8 +1124,7 @@ public class ClientFrame2 extends AbstractClientFrame
 			logger.warning("ClientFrame2: I/O Error reading");
 		}
 		Message messageIn;
-		
-		//elements.add(pseudo);
+		elements.add(pseudo);
 		/*String listeClientsCo = null;
 		try
 		{
@@ -1157,7 +1183,35 @@ public class ClientFrame2 extends AbstractClientFrame
 			if (messageIn != null)
 			{
 				messages.add(messageIn);
-				writeMessage(messageIn);
+				try {
+					document.remove(0, document.getLength());
+				} catch (BadLocationException ex) {
+					logger.warning("ClientFrame2: clear doc: bad location");
+					logger.warning(ex.getLocalizedMessage());
+				}
+				Consumer<Message> messagePrinter = (Message m) -> writeMessage(m);
+				if(activeFilter){
+					
+					Predicate<Message> selectionFilter = (Message m) ->
+		            {
+		                if (m != null)
+		                {
+		                    if (m.hasAuthor())
+		                    {
+		                        if (selectionModel.isSelectedIndex(elements.getIndex(m.getAuthor())))
+		                        {
+		                            return true;
+		                        }
+		                    }
+		                }
+		                return false;
+		            };
+					
+		            messages.stream().sorted().filter(selectionFilter).forEach(messagePrinter);
+				}
+				else{
+					messages.stream().sorted().forEach(messagePrinter);
+				}
 			}
 			else // messageIn == null
 			{
