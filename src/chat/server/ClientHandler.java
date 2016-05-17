@@ -112,29 +112,6 @@ public class ClientHandler implements Runnable
 			 * Attente d'une ligne de texte de la part d'un client (appel
 			 * bloquant)
 			 */
-			/*String listeClientsCo ="";
-			for (InputOutputClient c : allClients)
-			{
-				listeClientsCo +=c.getName() +";";
-			}
-			
-			synchronized (allClients)
-			{
-				for (InputOutputClient c : allClients)
-				{
-					if (c.isReady())
-					{
-						ObjectOutputStream out = c.getOut();
-						out.writeObject(listeClientsCo);
-					}
-					else
-					{
-						logger.warning("ClientHandler["
-								+ mainClient.getName() + "]Client "
-								+ c.getName() + " not ready");
-					}
-				}
-			}*/
 				
 			
 			while (!loggedOut && !killed &&

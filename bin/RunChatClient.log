@@ -1,0 +1,102 @@
+mai 17, 2016 4:25:27 PM logger.LoggerFactory getLogger
+INFOS: log file created
+mai 17, 2016 4:25:27 PM logger.LoggerFactory getLogger
+INFOS: Logger ready
+mai 17, 2016 4:25:38 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:25:38 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg
+mai 17, 2016 4:26:25 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:25 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg
+mai 17, 2016 4:26:25 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:25 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2$KickSelectionAction actionPerformed
+AVERTISSEMENT: KICK CMD : kick patate
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2 kickCheck
+AVERTISSEMENT: kick target :patate omfg
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:32 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 kickCheck
+AVERTISSEMENT: kick target :patate omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:53 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 kickCheck
+AVERTISSEMENT: kick target :patate omfg
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:26:59 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2$KickSelectionAction actionPerformed
+AVERTISSEMENT: KICK CMD : kick patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 kickCheck
+AVERTISSEMENT: kick target :patate omfg
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg, patate
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 kickCheck
+AVERTISSEMENT: kick target :patate omfg
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Avant : omfg
+mai 17, 2016 4:27:03 PM widgets.ClientFrame2 writeMessage
+GRAVE: Après : omfg

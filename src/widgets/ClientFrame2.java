@@ -325,10 +325,8 @@ public class ClientFrame2 extends AbstractClientFrame
 		
 		
 		JList<String> list = new JList<String>(elements);
-		//logger.severe(elements.toString());
 		list.setName("Elements");
 		list.setBorder(UIManager.getBorder("EditorPane.border"));
-		//list.setSelectedIndex(0);
 		list.setCellRenderer(new ColorTextRenderer());
 		list.setForeground(new Color(new Random(pseudo.hashCode()).nextInt()).darker());
 		listScrollPane.setViewportView(list);
@@ -463,9 +461,7 @@ public class ClientFrame2 extends AbstractClientFrame
 			 */
 			StyleConstants.setForeground(documentStyle,new Color(source.hashCode()).darker());
 		}
-		logger.severe("Avant : " + elements.toString());
 		elements.add(source);
-		logger.severe("Après : " + elements.toString());
 
 		try {
 			document.insertString(document.getLength(),
@@ -1125,23 +1121,6 @@ public class ClientFrame2 extends AbstractClientFrame
 		}
 		Message messageIn;
 		elements.add(pseudo);
-		/*String listeClientsCo = null;
-		try
-		{
-			listeClientsCo = ois.readObject().toString();
-		}
-		catch (IOException | ClassNotFoundException e)
-		{
-			logger.warning("ClientFrame2: I/O Error reading list connected clients");
-		}
-
-		if (listeClientsCo != null)
-		{
-			String[] laListeClientsCo = listeClientsCo.split(";");
-			for(int i=0; i<laListeClientsCo.length; i++) {
-				elements.add(laListeClientsCo[i]);
-			}
-		}*/
 
 		while (commonRun.booleanValue())
 		{
